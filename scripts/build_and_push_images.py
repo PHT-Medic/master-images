@@ -12,21 +12,21 @@ def build_images():
     password = os.getenv("REGISTRY_PW")
     login_result = client.login(registry=registry, username=username, password=password)
     print(f"Login result: {login_result}")
-    process_docker_image_dir("..\\language", client, registry)
-    process_docker_image_dir("..\\custom", client, registry)
+    process_docker_image_dir("./language", client, registry)
+    process_docker_image_dir("./custom", client, registry)
 
 
 def process_docker_image_dir(directory, client, registry):
     sub_directories = scandir(directory)
     for sub_dir in sub_directories:
-        repository_parts = sub_dir.split(os.sep)[2:]
+        repository_parts = sub_dir.split(os.sep)[1:]
         if len(repository_parts) >= 2:
             repository_name = "/".join(repository_parts)
             repository_name = registry + "/master/" + repository_name
             build_path = os.path.abspath(sub_dir)
 
-            print(f"Building image {repository_name}")
-            image, logs = client.api.build(path=build_path, tag=repository_name + ":latest")
+            print(f"Building image <{repository_name}> at path <{build_path}>")
+            image, logs = client.images.build(path=build_path, tag=repository_name + ":latest")
             for item in logs:
                 print(item)
             # push the image to the registry
