@@ -7,10 +7,10 @@ import os.path
 def build_images():
     client = docker.from_env()
     registry = os.getenv("CONTAINER_REGISTRY")
-    username = os.getenv("REGISTRY_USER")
-    password = os.getenv("REGISTRY_PASSWORD")
-    login_result = client.login(registry=registry, username=username, password=password)
-    print(f"Login result: {login_result}")
+    # username = os.getenv("REGISTRY_USER")
+    # password = os.getenv("REGISTRY_PASSWORD")
+    # login_result = client.login(registry=registry, username=username, password=password)
+    # print(f"Login result: {login_result}")
     process_docker_image_dir("./language", client, registry)
     process_docker_image_dir("./custom", client, registry)
 
