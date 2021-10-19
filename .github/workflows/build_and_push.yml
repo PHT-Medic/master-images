@@ -24,6 +24,9 @@ jobs:
           pip install docker
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements_dev.txt ]; then pip install -r requirements_dev.txt; fi
+      - name: Log in to registry
+        # This is where you will update the PAT to GITHUB_TOKEN
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME  }} --password-stdin
       - name: Build and push images
         env:
           CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
