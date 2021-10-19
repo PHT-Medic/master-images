@@ -1,6 +1,5 @@
 import docker
 import os
-from dotenv import load_dotenv, find_dotenv
 import typing
 import os.path
 
@@ -9,7 +8,7 @@ def build_images():
     client = docker.from_env()
     registry = os.getenv("CONTAINER_REGISTRY")
     username = os.getenv("REGISTRY_USER")
-    password = os.getenv("REGISTRY_PW")
+    password = os.getenv("REGISTRY_PASSWORD")
     login_result = client.login(registry=registry, username=username, password=password)
     print(f"Login result: {login_result}")
     process_docker_image_dir("./language", client, registry)
@@ -42,5 +41,4 @@ def scandir(start_dir) -> typing.List[typing.Tuple[str, str]]:
 
 
 if __name__ == '__main__':
-    load_dotenv(find_dotenv())
     build_images()
