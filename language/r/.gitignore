@@ -1,5 +1,4 @@
 .gitignore
 */
 !.gitignore
-!train-results
-!train-results/DEMO.tar
+!.meta.json
