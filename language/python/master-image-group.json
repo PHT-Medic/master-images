@@ -2,6 +2,6 @@
     "id": "python",
     "type": "language",
     "name": "Python",
-    "version": "2.7.0",
+    "version": "3.7+",
     "license": "MIT"
 }
