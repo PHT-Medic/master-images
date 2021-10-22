@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install docker
+          pip install docker python-dotenv
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements_dev.txt ]; then pip install -r requirements_dev.txt; fi
       - name: Log in to registry
