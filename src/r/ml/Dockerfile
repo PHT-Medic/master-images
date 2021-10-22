@@ -22,7 +22,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -y --no-install-recommends && 
 RUN pip3 install git+https://github.com/PHT-Medic/train-container-library.git && \
     rm -rf ~/.cache/pip
 
-COPY ./requirements.txt /tmp/requirements.txt
+COPY requirements.txt /tmp/requirements.txt
 RUN Rscript -e 'install.packages(readLines("/tmp/requirements.txt"))'
 
 # install civis api client

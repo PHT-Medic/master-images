@@ -1,0 +1,8 @@
+{
+    "id": "id",
+    "name": "Project XYZ",
+    "version": "1.0.0",
+    "license": "MIT",
+    "command": "/usr/bin/xyz",
+    "commandArguments": []
+}
