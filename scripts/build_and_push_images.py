@@ -17,7 +17,7 @@ def process_docker_image_dir(directory, client, registry):
 
     for sub_dir in sub_directories:
         if "Dockerfile" in os.listdir(sub_dir):
-            repository_parts = sub_dir.split(os.sep)[1:]
+            repository_parts = sub_dir.split(os.sep)[2:]
             repository_name = "/".join(repository_parts)
             repository_name = registry + "/master/" + repository_name
             build_path = os.path.abspath(sub_dir)
@@ -27,8 +27,8 @@ def process_docker_image_dir(directory, client, registry):
             for item in logs:
                 print(item)
             # push the image to the registry
-            for line in client.api.push(repository=repository_name, tag="latest", stream=True, decode=True):
-                print(line)
+            result = client.api.push(repository=repository_name, tag="latest")
+            print(result)
 
 
 def scandir(start_dir) -> typing.List[typing.Tuple[str, str]]:
