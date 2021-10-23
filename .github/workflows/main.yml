@@ -1,32 +1,36 @@
-name: Main CI
+name: main
 
 on:
-  push:
-    branches: [ master ]
+    push:
+        branches: [ master ]
 
 jobs:
-  build:
-    runs-on: [self-hosted, linux, x64]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9.1
-          architecture: x64
+    build:
+        runs-on: [self-hosted, linux, x64]
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install docker python-dotenv
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements_dev.txt ]; then pip install -r requirements_dev.txt; fi
-      - name: Log in to registry
-        # This is where you will update the PAT to GITHUB_TOKEN
-        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME  }} --password-stdin
-      - name: Build and push images
-        env:
-          CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-        run: python ./scripts/build_and_push_images.py
+        strategy:
+            matrix:
+                node-version: [16.x]
+
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Use Node.js ${{ matrix.node-version }}
+                uses: actions/setup-node@v2
+                with:
+                    node-version: ${{ matrix.node-version }}
+
+            -   name: Install dependencies
+                run: |
+                    npm ci
+                    npm run build
+
+            -   name: Log in to registry
+                run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME  }} --password-stdin
+
+            -   name: Build and push images
+                env:
+                    CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
+                    REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+                    REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+                run: npm run start

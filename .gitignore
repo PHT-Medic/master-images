@@ -3,6 +3,9 @@
 /logs
 *.log
 
+# modules
+node_modules
+
 # Runtime data
 pids
 *.pid
