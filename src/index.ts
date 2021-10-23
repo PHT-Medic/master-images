@@ -21,9 +21,15 @@ const docker = new Dockerode();
 const registryHostSuffix : string = 'master';
 const scanDirectoryPath : string = path.join(__dirname, '..', 'data');
 
-const registryHostname : string = requireFromEnv('CONTAINER_REGISTRY');
-const registryUsername : string = requireFromEnv('REGISTRY_USERNAME');
-const registryPassword : string = requireFromEnv('REGISTRY_PASSWORD');
+const registryHostname = requireFromEnv('CONTAINER_REGISTRY');
+const registryUsername = requireFromEnv('REGISTRY_USERNAME');
+const registryPassword = requireFromEnv('REGISTRY_PASSWORD');
+
+const authconfig : AuthConfig = {
+    serveraddress: registryHostname,
+    username: registryUsername,
+    password: registryPassword
+};
 
 (async () => {
     console.log(chalk.bold('Image scanning, building and publishing'));
@@ -65,11 +71,7 @@ const registryPassword : string = requireFromEnv('REGISTRY_PASSWORD');
             const stream = await docker.buildImage(
                 pack, {
                     t: tag,
-                    authconfig: {
-                        serveraddress: registryHostname,
-                        username: registryUsername,
-                        password: registryPassword
-                    }
+                    authconfig
                 });
 
             spinner.start(`Build: ${tag}`);
@@ -113,11 +115,7 @@ const registryPassword : string = requireFromEnv('REGISTRY_PASSWORD');
             const image = docker.getImage(tags[i]);
 
             const stream = await image.push({
-                authconfig: {
-                    serveraddress: registryHostname,
-                    username: registryUsername,
-                    password: registryPassword
-                } as AuthConfig
+                authconfig
             });
 
             spinner.start(`Push: ${tags[i]}`);
