@@ -1,7 +1,4 @@
 {
     "id": "r",
-    "type": "language",
-    "name": "R",
-    "version": "1.0.0",
-    "license": "MIT"
+    "name": "R"
 }

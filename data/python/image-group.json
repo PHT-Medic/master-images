@@ -1,7 +1,4 @@
 {
     "id": "python",
-    "type": "language",
-    "name": "Python",
-    "version": "3.7+",
-    "license": "MIT"
+    "name": "Python"
 }
