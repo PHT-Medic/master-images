@@ -1,9 +1,0 @@
-{
-    "id": "id",
-    "type": "language",
-    "name": "Language XYZ",
-    "version": "1.0.0",
-    "license": "MIT",
-    "command": "/usr/bin/xyz",
-    "commandArguments": []
-}
