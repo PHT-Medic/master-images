@@ -1,4 +1,6 @@
 {
     "id": "python",
-    "name": "Python"
+    "name": "Python",
+    "command": "python",
+    "commandArguments": []
 }

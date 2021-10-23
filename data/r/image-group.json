@@ -1,4 +1,6 @@
 {
     "id": "r",
-    "name": "R"
+    "name": "R",
+    "command": "Rscript",
+    "commandArguments": []
 }

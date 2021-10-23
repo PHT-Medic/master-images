@@ -1,4 +1,6 @@
 {
     "id": "cord",
-    "name": "Cord"
+    "name": "Cord",
+    "command": "Rscript",
+    "commandArguments": []
 }
