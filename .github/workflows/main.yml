@@ -34,6 +34,9 @@ jobs:
                     REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
                     REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
                 run: npm run start
+                
+            -   name: Log in to dev registry
+                run: echo "${{ secrets.DEV_REGISTRY_PASSWORD }}" | docker login ${{ secrets.DEV_REGISTRY }} -u ${{ secrets.DEV_REGISTRY_USER  }} --password-stdin
             -   name: Push to dev
                 env:
                     CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }}
