@@ -34,3 +34,9 @@ jobs:
                     REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
                     REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
                 run: npm run start
+            -   name: Push to dev
+                env:
+                    CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }}
+                    REGISTRY_USER: ${{ secrets.DEV_REGISTRY_USER }}
+                    REGISTRY_PASSWORD: ${{ secrets.DEV_REGISTRY_PASSWORD }}
+                run: npm run start
