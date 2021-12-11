@@ -29,6 +29,6 @@
     "devDependencies": {
         "@types/dockerode": "^3.3.0",
         "@types/node": "^16.11.12",
-        "typescript": "^4.4.4"
+        "typescript": "^4.5.3"
     }
 }
