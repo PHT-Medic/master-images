@@ -6,7 +6,7 @@ on:
 
 jobs:
     build:
-        runs-on: [self-hosted, linux, x64]
+        runs-on: [ self-hosted, linux, x64 ]
 
         strategy:
             matrix:
@@ -28,28 +28,11 @@ jobs:
             # -   name: Log in to registry
             #     run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME  }} --password-stdin
 
-            # -   name: Build and push images
-            #     env:
-            #         CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
-            #         REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-            #         REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-            #     run: npm run start
-                
             -   name: Log in to dev registry
                 run: echo "${{ secrets.DEV_REGISTRY_PASSWORD }}" | docker login ${{ secrets.DEV_REGISTRY }} -u ${{ secrets.DEV_REGISTRY_USER  }} --password-stdin
             -   name: Push to dev
                 env:
-                    CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }}
-                    REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER }}
-                    REGISTRY_PASSWORD: ${{ secrets.DEV_REGISTRY_PASSWORD }}
-                run: npm run start
-            
-            -   name: Log in to DMZ registry
-                run: echo "${{ secrets.DMZ_PASSWORD }}" | docker login ${{ secrets.DMZ_REGISTRY }} -u ${{ secrets.DMZ_USERNAME  }} --password-stdin
-            
-            -   name: Push to DMZ
-                env:
-                    CONTAINER_REGISTRY: ${{ secrets.DMZ_REGISTRY }}
-                    REGISTRY_USERNAME: ${{ secrets.DMZ_USERNAME }}
-                    REGISTRY_PASSWORD: ${{ secrets.DMZ_PASSWORD }}
+                    CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }},${{ secrets.CONTAINER_REGISTRY }},${{ secrets.DMZ_REGISTRY }}
+                    REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER }},${{ secrets.REGISTRY_USERNAME }},${{ secrets.DMZ_USERNAME }}
+                    REGISTRY_PASSWORD: ${{ secrets.DEV_REGISTRY_PASSWORD }},${{ secrets.REGISTRY_PASSWORD }},${{ secrets.DMZ_PASSWORD }}
                 run: npm run start
