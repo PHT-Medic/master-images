@@ -25,15 +25,15 @@ jobs:
                     npm ci
                     npm run build
 
-            -   name: Log in to registry
-                run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME  }} --password-stdin
+            # -   name: Log in to registry
+            #     run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME  }} --password-stdin
 
-            -   name: Build and push images
-                env:
-                    CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
-                    REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-                    REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-                run: npm run start
+            # -   name: Build and push images
+            #     env:
+            #         CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
+            #         REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+            #         REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+            #     run: npm run start
                 
             -   name: Log in to dev registry
                 run: echo "${{ secrets.DEV_REGISTRY_PASSWORD }}" | docker login ${{ secrets.DEV_REGISTRY }} -u ${{ secrets.DEV_REGISTRY_USER  }} --password-stdin
