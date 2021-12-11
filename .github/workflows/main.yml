@@ -24,10 +24,10 @@ jobs:
                 run: |
                     npm ci
                     npm run build
-                    
+
             -   name: Push to dev
                 env:
-                    CONTAINER_REGISTRY: ${{ secrets.DMZ_REGISTRY }}
-                    REGISTRY_USERNAME: ${{ secrets.DMZ_USERNAME }}
-                    REGISTRY_PASSWORD: ${{ secrets.DMZ_PASSWORD }}
+                    CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
+                    REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME  }}
+                    REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
                 run: npm run start
