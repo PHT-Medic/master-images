@@ -136,7 +136,7 @@ for(let i=0; i<sum; i++) {
         process.exit(1);
     }
 
-    const pushConfigurations : { tag: string, registryConfig: RegistryConfig }[] = [];
+    const pushConfigurations : { path: string, registryConfig: RegistryConfig }[] = [];
 
     try {
         spinner.start('Tagging');
@@ -148,11 +148,11 @@ for(let i=0; i<sum; i++) {
 
             for(let j=0; j<registryConfigurations.length; j++) {
                 const tagPromise = new Promise<void>(((resolve, reject) => {
-                    spinner.start(`Tag: ${imageTags[i]}`);
+                    spinner.start(`Tag: ${imageTags[i].repository}`);
                     const destinationRepository = `${registryConfigurations[j].host}/${imageTags[i].repository}`;
 
                     pushConfigurations.push({
-                        tag: `${destinationRepository}:${imageTags[i].tag}`,
+                        path: `${destinationRepository}:${imageTags[i].tag}`,
                         registryConfig: registryConfigurations[j]
                     });
 
@@ -191,7 +191,7 @@ for(let i=0; i<sum; i++) {
 
         const pushPromises: Promise<any>[] = [];
         for (let i = 0; i < pushConfigurations.length; i++) {
-            const image = docker.getImage(pushConfigurations[i].tag);
+            const image = docker.getImage(pushConfigurations[i].path);
 
             const stream = await image.push({
                 authconfig: {
@@ -201,7 +201,7 @@ for(let i=0; i<sum; i++) {
                 }
             });
 
-            spinner.start(`Push: ${pushConfigurations[i].tag}`);
+            spinner.start(`Push: ${pushConfigurations[i].path}`);
 
             pushPromises.push(new Promise((resolve, reject) => {
                 docker.modem.followProgress(
@@ -219,7 +219,7 @@ for(let i=0; i<sum; i++) {
                             }
                         }
 
-                        spinner.info(`Pushed: ${pushConfigurations[i].tag}`);
+                        spinner.info(`Pushed: ${pushConfigurations[i].path}`);
 
                         return resolve(res);
                     }
