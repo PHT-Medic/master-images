@@ -148,23 +148,26 @@ for(let i=0; i<sum; i++) {
 
             for(let j=0; j<registryConfigurations.length; j++) {
                 const tagPromise = new Promise<void>(((resolve, reject) => {
-                    spinner.start(`Tag: ${imageTags[i].repository}`);
-                    const destinationRepository = `${registryConfigurations[j].host}/${imageTags[i].repository}`;
+                    const repository = `${registryConfigurations[j].host}/${imageTags[i].repository}`;
+                    const tag = imageTags[i].tag;
+
+                    spinner.start(`Tag: ${repository}:${tag}`);
 
                     pushConfigurations.push({
-                        path: `${destinationRepository}:${imageTags[i].tag}`,
+                        path: `${repository}:${tag}`,
                         registryConfig: registryConfigurations[j]
                     });
 
                     image.tag({
-                        repo: destinationRepository,
+                        repo: repository,
                         tag: imageTags[i].tag
                     },((error, result) => {
                         if(error) {
+                            error.path = `${repository}:${tag}`;
                             return reject(error);
                         }
 
-                        spinner.info(`Tagged: ${destinationRepository}`);
+                        spinner.info(`Tagged: ${repository}:${tag}`);
 
                         resolve();
                     }));
