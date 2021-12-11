@@ -23,7 +23,7 @@
         "dotenv": "^10.0.0",
         "fs-docker": "^0.0.6",
         "ora": "^4.0.3",
-        "tar-fs": "^2.0.1",
+        "tar-fs": "^2.1.1",
         "ts-node": "^10.4.0"
     },
     "devDependencies": {
