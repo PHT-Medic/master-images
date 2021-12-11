@@ -6,7 +6,7 @@
  */
 
 import path from "path";
-import DockerClient from "dockerode";
+import DockerClient, {AuthConfig} from "dockerode";
 import {config} from "dotenv";
 import {scanDirectory, ScanResult} from "fs-docker";
 import chalk from 'chalk'
@@ -43,11 +43,11 @@ if(
     process.exit(0);
 }
 
-const registryConfigurations : RegistryConfig[] = [];
+const registries : RegistryConfig[] = [];
 
 const sum = envAggregation[RegistryEnv.HOST].length;
 for(let i=0; i<sum; i++) {
-    registryConfigurations.push({
+    registries.push({
         host: envAggregation[RegistryEnv.HOST][i],
         username: envAggregation[RegistryEnv.USERNAME][i],
         password: envAggregation[RegistryEnv.PASSWORD][i]
@@ -77,22 +77,16 @@ for(let i=0; i<sum; i++) {
         process.exit(1);
     }
 
-    const imageTags: { repository: string, tag: string }[] = [];
-    const buildPromises: Promise<any>[] = [];
+    const images: string[] = [];
 
     try {
         spinner.start('Build');
 
+        const buildPromises: Promise<any>[] = [];
         for(let i=0;i<scan.images.length; i++) {
-            const tag : string = 'latest';
-            const repository : string = `${registryHostSuffix}/${scan.images[i].virtualPath}`;
+            const image : string = `${registryHostSuffix}/${scan.images[i].virtualPath}`;
 
-            imageTags.push({
-                repository,
-                tag
-            });
-
-            const fullTag = `${repository}:${tag}`;
+            images.push(image);
 
             const imageFilePath : string = path.join(scanDirectoryPath, scan.images[i].path);
 
@@ -100,10 +94,10 @@ for(let i=0; i<sum; i++) {
 
             const stream = await docker.buildImage(
                 pack, {
-                    t: fullTag
+                    t: image
                 });
 
-            spinner.start(`Build: ${fullTag}`);
+            spinner.start(`Build: ${image}`);
 
             buildPromises.push(new Promise((resolve, reject) => {
                 docker.modem.followProgress(
@@ -116,7 +110,7 @@ for(let i=0; i<sum; i++) {
                             return reject(new Error(raw.errorDetail.message));
                         }
 
-                        spinner.info(`Built: ${fullTag}`);
+                        spinner.info(`Built: ${image}`);
 
                         resolve(res);
                     }
@@ -136,38 +130,27 @@ for(let i=0; i<sum; i++) {
         process.exit(1);
     }
 
-    const pushConfigurations : { path: string, registryConfig: RegistryConfig }[] = [];
-
     try {
         spinner.start('Tagging');
 
         const tagPromises: Promise<any>[] = [];
 
-        for(let i=0;i<imageTags.length; i++) {
-            const image = await docker.getImage(imageTags[i].repository+':'+imageTags[i].tag);
+        for(let i=0; i<images.length; i++) {
+            for(let j=0; j<registries.length; j++) {
+                const repository = `${registries[j].host}/${images[i]}`;
 
-            for(let j=0; j<registryConfigurations.length; j++) {
                 const tagPromise = new Promise<void>(((resolve, reject) => {
-                    const repository = `${registryConfigurations[j].host}/${imageTags[i].repository}`;
-                    const tag = imageTags[i].tag;
+                    spinner.start(`Tagging: ${repository}`);
 
-                    spinner.start(`Tag: ${repository}:${tag}`);
-
-                    pushConfigurations.push({
-                        path: `${repository}:${tag}`,
-                        registryConfig: registryConfigurations[j]
-                    });
-
-                    image.tag({
-                        repo: repository,
-                        tag: imageTags[i].tag
-                    },((error, result) => {
-                        if(error) {
-                            error.path = `${repository}:${tag}`;
+                    docker.getImage(`${images[i]}:latest`).tag({
+                        repo: repository
+                    }, ((error, result) => {
+                        if (error) {
+                            error.path = repository;
                             return reject(error);
                         }
 
-                        spinner.info(`Tagged: ${repository}:${tag}`);
+                        spinner.info(`Tagged: ${repository}`);
 
                         resolve();
                     }));
@@ -193,41 +176,46 @@ for(let i=0; i<sum; i++) {
         spinner.start('Push images');
 
         const pushPromises: Promise<any>[] = [];
-        for (let i = 0; i < pushConfigurations.length; i++) {
-            const image = docker.getImage(pushConfigurations[i].path);
+        for (let i = 0; i < registries.length; i++) {
+            const authConfig : AuthConfig = {
+                serveraddress: registries[i].host,
+                    username: registries[i].username,
+                    password: registries[i].password
+            }
 
-            const stream = await image.push({
-                authconfig: {
-                    serveraddress: pushConfigurations[i].registryConfig.host,
-                    username: pushConfigurations[i].registryConfig.username,
-                    password: pushConfigurations[i].registryConfig.password
-                }
-            });
+            for(let j=0; j<images.length; j++) {
+                const repository = `${registries[i].host}/${images[j]}:latest`;
+                const image = docker.getImage(repository);
 
-            spinner.start(`Push: ${pushConfigurations[i].path}`);
+                const stream = await image.push({
+                    authconfig: authConfig
+                });
 
-            pushPromises.push(new Promise((resolve, reject) => {
-                docker.modem.followProgress(
-                    stream,
-                    (err: Error, res: any[]) => {
-                        if(err) {
-                            return reject(err);
-                        }
+                spinner.start(`Push: ${repository}`);
 
-                        const raw = res.pop();
-
-                        if(Object.prototype.toString.call(raw) === '[object Object]') {
-                            if(typeof raw?.errorDetail?.message == 'string') {
-                                return reject(new Error(raw.errorDetail.message));
+                pushPromises.push(new Promise((resolve, reject) => {
+                    docker.modem.followProgress(
+                        stream,
+                        (err: Error, res: any[]) => {
+                            if(err) {
+                                return reject(err);
                             }
+
+                            const raw = res.pop();
+
+                            if(Object.prototype.toString.call(raw) === '[object Object]') {
+                                if(typeof raw?.errorDetail?.message == 'string') {
+                                    return reject(new Error(raw.errorDetail.message));
+                                }
+                            }
+
+                            spinner.info(`Pushed: ${repository}`);
+
+                            return resolve(res);
                         }
-
-                        spinner.info(`Pushed: ${pushConfigurations[i].path}`);
-
-                        return resolve(res);
-                    }
-                );
-            }));
+                    );
+                }));
+            }
         }
 
         await Promise.all(pushPromises);
