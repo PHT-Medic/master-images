@@ -19,7 +19,7 @@
     "license": "MIT",
     "dependencies": {
         "@personalhealthtrain/ui-common": "^1.0.1-alpha.2",
-        "chalk": "^4.1.2",
+        "chalk": "^5.0.0",
         "dockerode": "^3.3.1",
         "dotenv": "^10.0.0",
         "fs-docker": "^0.1.1",
