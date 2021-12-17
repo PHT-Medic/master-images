@@ -14,6 +14,7 @@ import * as tar from 'tar-fs';
 import {requireFromEnv} from "./utils";
 import {RegistryEnv} from "./constants";
 import {RegistryConfig} from "./type";
+import {syncScanResultToCentralAPI} from "./utils";
 
 const ora = require('ora');
 
@@ -228,6 +229,17 @@ for(let i=0; i<sum; i++) {
 
         console.log('failed', e);
         process.exit(1);
+    }
+
+    try {
+        await syncScanResultToCentralAPI(scan);
+        spinner.succeed('Synced with Central-API');
+    } catch (e) {
+        if(e instanceof Error) {
+            spinner.fail('Push to Central-API failed...');
+        }
+
+        console.log('failed', e);
     }
 
     console.log(chalk.gray.underline('Finished'));
