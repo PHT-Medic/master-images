@@ -27,7 +27,9 @@ in the folder hierarchy of the file path.
 ```
 
 These properties can also be defined/overwritten with a `image.json` file in the same directory as the `Dockerfile`.
-The content can be the same as for an image group. A image is also identified by an `id` & `name`.
+The content can be the same as for an image group. An image is also identified by an `id` & `name`.
+
+For further details, check out [docker-scan](https://github.com/tada5hi/docker-scan).
 
 ---
 

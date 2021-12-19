@@ -5,7 +5,7 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {ScanResult} from "fs-docker";
+import {ScanResult} from "docker-scan";
 import {
     APIType,
     MasterImageCommand,

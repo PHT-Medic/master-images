@@ -7,8 +7,8 @@
 
 import path from "path";
 import DockerClient, {AuthConfig} from "dockerode";
+import {scanDirectory, ScanResult} from "docker-scan";
 import {config} from "dotenv";
-import {scanDirectory, ScanResult} from "fs-docker";
 import chalk from 'chalk'
 import * as tar from 'tar-fs';
 import {requireFromEnv} from "./utils";
