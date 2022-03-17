@@ -21,7 +21,7 @@
     "dependencies": {
         "@personalhealthtrain/ui-common": "^1.1.0-alpha.1",
         "@trapi/client": "^2.0.2",
-        "@typescript-auth/domains": "^0.0.18",
+        "@typescript-auth/domains": "^0.0.29",
         "chalk": "^4.1.2",
         "docker-scan": "^1.0.3",
         "dockerode": "^3.3.1",
