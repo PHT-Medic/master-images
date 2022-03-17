@@ -5,37 +5,52 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {setConfig, useClient} from "@trapi/client";
-import {ScanResult} from "docker-scan";
-import {MasterImageAPI, MasterImageCommand, parseHarborConnectionString,} from "@personalhealthtrain/ui-common";
-import {requireFromEnv} from "./env";
-import {OAuth2TokenGrant, TokenAPI} from "@typescript-auth/domains";
+import { setConfig, useClient } from '@trapi/client';
+import { ScanResult } from 'docker-scan';
+import {
+    MasterImageAPI,
+    MasterImageCommand,
+    parseHarborConnectionString,
+} from '@personalhealthtrain/central-common';
+import { TokenAPI } from '@authelion/common';
+import { Ora } from 'ora';
+import { requireFromEnv } from './env';
 
-export async function syncScanResultToCentralAPI(scanResult: ScanResult) {
-    const connection = parseHarborConnectionString(requireFromEnv('CENTRAL_API_CONNECTION_STRING'));
+export async function syncScanResultToCentralAPI(context: {
+    scan: ScanResult,
+    spinner: Ora
+}) {
+    context.spinner.start('Try to push meta information to central-api');
 
-    setConfig( {
-        driver: {
-            baseURL: connection.host,
-            withCredentials: true
-        }
-    });
+    try {
+        const connection = parseHarborConnectionString(requireFromEnv('CENTRAL_API_CONNECTION_STRING'));
 
-    const client = useClient();
-
-    const tokenAPI = new TokenAPI(client.driver);
-    const token = await tokenAPI.create({
-        id: connection.user,
-        secret: connection.password,
-        grant_type: OAuth2TokenGrant.ROBOT_CREDENTIALS
-    })
-
-    client
-        .setAuthorizationHeader({
-            type: 'Bearer',
-            token: token.access_token
+        setConfig({
+            driver: {
+                baseURL: connection.host,
+                withCredentials: true,
+            },
         });
 
-    const masterImageAPI = new MasterImageAPI(client.driver);
-    await masterImageAPI.runCommand(MasterImageCommand.SYNC_PUSHED, scanResult);
+        const client = useClient();
+
+        const tokenAPI = new TokenAPI(client.driver);
+        const token = await tokenAPI.create({
+            id: connection.user,
+            secret: connection.password,
+        });
+
+        client
+            .setAuthorizationHeader({
+                type: 'Bearer',
+                token: token.access_token,
+            });
+
+        const masterImageAPI = new MasterImageAPI(client.driver);
+        await masterImageAPI.runCommand(MasterImageCommand.SYNC_PUSHED, context.scan);
+
+        context.spinner.succeed('Push meta information to central-api succeeded.');
+    } catch (e) {
+        context.spinner.fail('Push meta information to central-api failed.');
+    }
 }

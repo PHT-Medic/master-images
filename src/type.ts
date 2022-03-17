@@ -5,12 +5,8 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import {RegistryEnv} from "./constants";
-
-export type RegistryConfig ={
+export type RegistryConfig = {
     host: string,
     username: string,
     password: string
-}
-
-export type RegistryEnvType = `${RegistryEnv}`;
+};
