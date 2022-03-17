@@ -1,0 +1,6 @@
+minio
+numpy
+pandas
+neurolab
+scikit-learn
+missingpy
