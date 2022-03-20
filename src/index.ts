@@ -48,8 +48,10 @@ const registries : RegistryConfig[] = [];
 
 const sum = envAggregation[RegistryEnv.HOST].length;
 for (let i = 0; i < sum; i++) {
+    const url = new URL(envAggregation[RegistryEnv.HOST][i]);
+
     registries.push({
-        host: envAggregation[RegistryEnv.HOST][i],
+        host: url.hostname,
         username: envAggregation[RegistryEnv.USERNAME][i],
         password: envAggregation[RegistryEnv.PASSWORD][i],
     });
@@ -127,7 +129,7 @@ for (let i = 0; i < sum; i++) {
 
                         spinner.info(`Built: ${image}`);
 
-                        resolve(res);
+                        return resolve(res);
                     },
                 );
             }));
@@ -167,7 +169,7 @@ for (let i = 0; i < sum; i++) {
 
                         spinner.info(`Tagged: ${repository}`);
 
-                        resolve();
+                        return resolve();
                     }));
                 }));
 
