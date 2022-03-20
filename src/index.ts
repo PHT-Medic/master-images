@@ -48,10 +48,18 @@ const registries : RegistryConfig[] = [];
 
 const sum = envAggregation[RegistryEnv.HOST].length;
 for (let i = 0; i < sum; i++) {
-    const url = new URL(envAggregation[RegistryEnv.HOST][i]);
+    let host : string = envAggregation[RegistryEnv.HOST][i];
+
+    if (
+        host.startsWith('http://') ||
+        host.startsWith('https://')
+    ) {
+        const parsed = new URL(host);
+        host = parsed.hostname;
+    }
 
     registries.push({
-        host: url.hostname,
+        host,
         username: envAggregation[RegistryEnv.USERNAME][i],
         password: envAggregation[RegistryEnv.PASSWORD][i],
     });
