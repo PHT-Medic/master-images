@@ -29,7 +29,7 @@ jobs:
             -   name: Push to dev
                 env:
                     CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }},${{ secrets.DMZ_REGISTRY }},${{ secrets.STAGING_REGISTRY }}
-                    REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER  }},${{ secrets.DMZ_USERNAME }},${{ secrets.STAGING_USERNAME }
+                    REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER  }},${{ secrets.DMZ_USERNAME }},${{ secrets.STAGING_USERNAME }}
                     REGISTRY_PASSWORD: ${{ secrets.DEV_REGISTRY_PASSWORD }},${{ secrets.DMZ_PASSWORD }},${{ secrets.STAGING_PASSWORD }}
                     CENTRAL_API_CONNECTION_STRING: ${{ secrets.CENTRAL_API_CONNECTION_STRING }}
                 run: npm run start
