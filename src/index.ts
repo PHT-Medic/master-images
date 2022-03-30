@@ -200,7 +200,6 @@ for (let i = 0; i < sum; i++) {
     try {
         spinner.start('Push images');
 
-        const pushPromises: Promise<any>[] = [];
         for (let i = 0; i < registries.length; i++) {
             const authConfig : AuthConfig = {
                 serveraddress: registries[i].host,
@@ -209,6 +208,8 @@ for (let i = 0; i < sum; i++) {
             };
 
             try {
+                const pushPromises: Promise<any>[] = [];
+
                 for (let j = 0; j < images.length; j++) {
                     const repository = `${registries[i].host}/${images[j]}:latest`;
                     const image = docker.getImage(repository);
@@ -242,12 +243,12 @@ for (let i = 0; i < sum; i++) {
                         );
                     }));
                 }
+
+                await Promise.all(pushPromises);
             } catch (e) {
                 spinner.fail(`Push to registry ${registries[i].host} failed`);
             }
         }
-
-        await Promise.all(pushPromises);
 
         spinner.succeed('Pushed');
     } catch (e) {
