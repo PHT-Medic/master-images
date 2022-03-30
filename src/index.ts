@@ -5,21 +5,21 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import path from "path";
-import DockerClient, {AuthConfig} from "dockerode";
-import {scanDirectory, ScanResult} from "docker-scan";
-import {config} from "dotenv";
-import chalk from 'chalk'
+import path from 'path';
+import DockerClient, { AuthConfig } from 'dockerode';
+import { ScanResult, scanDirectory } from 'docker-scan';
+import { config } from 'dotenv';
+import chalk from 'chalk';
 import * as tar from 'tar-fs';
-import {requireFromEnv} from "./utils";
-import {RegistryEnv} from "./constants";
-import {RegistryConfig} from "./type";
-import {syncScanResultToCentralAPI} from "./utils";
+import { requireFromEnv, syncScanResultToCentralAPI } from './utils';
+import { RegistryEnv } from './constants';
+import { RegistryConfig } from './type';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const ora = require('ora');
 
 config({
-    path: path.resolve(__dirname, '../.env')
+    path: path.resolve(__dirname, '../.env'),
 });
 
 // Module init
@@ -27,16 +27,16 @@ const docker = new DockerClient();
 
 // Constants
 
-const registryHostSuffix : string = 'master';
+const registryHostSuffix = 'master';
 const scanDirectoryPath : string = path.join(__dirname, '..', 'data');
 
 const envAggregation : Record<RegistryEnv, string[]> = {
     [RegistryEnv.HOST]: requireFromEnv(RegistryEnv.HOST).split(','),
     [RegistryEnv.USERNAME]: requireFromEnv(RegistryEnv.USERNAME).split(','),
-    [RegistryEnv.PASSWORD]: requireFromEnv(RegistryEnv.PASSWORD).split(',')
+    [RegistryEnv.PASSWORD]: requireFromEnv(RegistryEnv.PASSWORD).split(','),
 };
 
-if(
+if (
     envAggregation[RegistryEnv.HOST].length !== envAggregation[RegistryEnv.PASSWORD].length ||
     envAggregation[RegistryEnv.PASSWORD].length !== envAggregation[RegistryEnv.USERNAME].length
 ) {
@@ -47,18 +47,29 @@ if(
 const registries : RegistryConfig[] = [];
 
 const sum = envAggregation[RegistryEnv.HOST].length;
-for(let i=0; i<sum; i++) {
+for (let i = 0; i < sum; i++) {
+    let host : string = envAggregation[RegistryEnv.HOST][i];
+
+    if (
+        host.startsWith('http://') ||
+        host.startsWith('https://')
+    ) {
+        const parsed = new URL(host);
+        host = parsed.hostname;
+    }
+
     registries.push({
-        host: envAggregation[RegistryEnv.HOST][i],
+        host,
         username: envAggregation[RegistryEnv.USERNAME][i],
-        password: envAggregation[RegistryEnv.PASSWORD][i]
-    })
+        password: envAggregation[RegistryEnv.PASSWORD][i],
+    });
 }
 
 (async () => {
     console.log(chalk.bold('Image scanning, building and publishing'));
+
     const spinner = ora({
-        spinner: 'dots'
+        spinner: 'dots',
     });
 
     let scan : ScanResult;
@@ -70,7 +81,7 @@ for(let i=0; i<sum; i++) {
 
         spinner.succeed('Scanned');
     } catch (e) {
-        if(e instanceof Error) {
+        if (e instanceof Error) {
             spinner.fail('Could not scan directory');
         }
 
@@ -79,10 +90,13 @@ for(let i=0; i<sum; i++) {
     }
 
     try {
-        await syncScanResultToCentralAPI(scan);
+        await syncScanResultToCentralAPI({
+            scan,
+            spinner,
+        });
         spinner.succeed('Synced with Central-API');
     } catch (e) {
-        if(e instanceof Error) {
+        if (e instanceof Error) {
             spinner.fail('Push to Central-API failed...');
         }
 
@@ -95,8 +109,8 @@ for(let i=0; i<sum; i++) {
         spinner.start('Build');
 
         const buildPromises: Promise<any>[] = [];
-        for(let i=0;i<scan.images.length; i++) {
-            const image : string = `${registryHostSuffix}/${scan.images[i].virtualPath}`;
+        for (let i = 0; i < scan.images.length; i++) {
+            const image = `${registryHostSuffix}/${scan.images[i].virtualPath}`;
 
             images.push(image);
 
@@ -104,10 +118,9 @@ for(let i=0; i<sum; i++) {
 
             const pack = tar.pack(imageFilePath);
 
-            const stream = await docker.buildImage(
-                pack, {
-                    t: image
-                });
+            const stream = await docker.buildImage(pack, {
+                t: image,
+            });
 
             spinner.start(`Build: ${image}`);
 
@@ -115,17 +128,17 @@ for(let i=0; i<sum; i++) {
                 docker.modem.followProgress(
                     stream,
                     (err: Error, res: any[]) => {
-                        if(err) return reject(err);
+                        if (err) return reject(err);
 
                         const raw = res.pop();
-                        if(typeof raw?.errorDetail?.message == 'string') {
+                        if (typeof raw?.errorDetail?.message === 'string') {
                             return reject(new Error(raw.errorDetail.message));
                         }
 
                         spinner.info(`Built: ${image}`);
 
-                        resolve(res);
-                    }
+                        return resolve(res);
+                    },
                 );
             }));
         }
@@ -134,7 +147,7 @@ for(let i=0; i<sum; i++) {
 
         spinner.succeed('Built');
     } catch (e) {
-        if(e instanceof Error) {
+        if (e instanceof Error) {
             spinner.fail('Build failed');
         }
 
@@ -147,15 +160,15 @@ for(let i=0; i<sum; i++) {
 
         const tagPromises: Promise<any>[] = [];
 
-        for(let i=0; i<images.length; i++) {
-            for(let j=0; j<registries.length; j++) {
+        for (let i = 0; i < images.length; i++) {
+            for (let j = 0; j < registries.length; j++) {
                 const repository = `${registries[j].host}/${images[i]}`;
 
                 const tagPromise = new Promise<void>(((resolve, reject) => {
                     spinner.start(`Tagging: ${repository}`);
 
                     docker.getImage(`${images[i]}:latest`).tag({
-                        repo: repository
+                        repo: repository,
                     }, ((error, result) => {
                         if (error) {
                             error.path = repository;
@@ -164,7 +177,7 @@ for(let i=0; i<sum; i++) {
 
                         spinner.info(`Tagged: ${repository}`);
 
-                        resolve();
+                        return resolve();
                     }));
                 }));
 
@@ -176,7 +189,7 @@ for(let i=0; i<sum; i++) {
 
         spinner.succeed('Tagged');
     } catch (e) {
-        if(e instanceof Error) {
+        if (e instanceof Error) {
             spinner.fail('Tagging failed');
         }
 
@@ -191,16 +204,16 @@ for(let i=0; i<sum; i++) {
         for (let i = 0; i < registries.length; i++) {
             const authConfig : AuthConfig = {
                 serveraddress: registries[i].host,
-                    username: registries[i].username,
-                    password: registries[i].password
-            }
+                username: registries[i].username,
+                password: registries[i].password,
+            };
 
-            for(let j=0; j<images.length; j++) {
+            for (let j = 0; j < images.length; j++) {
                 const repository = `${registries[i].host}/${images[j]}:latest`;
                 const image = docker.getImage(repository);
 
                 const stream = await image.push({
-                    authconfig: authConfig
+                    authconfig: authConfig,
                 });
 
                 spinner.start(`Push: ${repository}`);
@@ -209,14 +222,14 @@ for(let i=0; i<sum; i++) {
                     docker.modem.followProgress(
                         stream,
                         (err: Error, res: any[]) => {
-                            if(err) {
+                            if (err) {
                                 return reject(err);
                             }
 
                             const raw = res.pop();
 
-                            if(Object.prototype.toString.call(raw) === '[object Object]') {
-                                if(typeof raw?.errorDetail?.message == 'string') {
+                            if (Object.prototype.toString.call(raw) === '[object Object]') {
+                                if (typeof raw?.errorDetail?.message === 'string') {
                                     return reject(new Error(raw.errorDetail.message));
                                 }
                             }
@@ -224,7 +237,7 @@ for(let i=0; i<sum; i++) {
                             spinner.info(`Pushed: ${repository}`);
 
                             return resolve(res);
-                        }
+                        },
                     );
                 }));
             }
@@ -234,7 +247,7 @@ for(let i=0; i<sum; i++) {
 
         spinner.succeed('Pushed');
     } catch (e) {
-        if(e instanceof Error) {
+        if (e instanceof Error) {
             spinner.fail('Push failed');
         }
 
