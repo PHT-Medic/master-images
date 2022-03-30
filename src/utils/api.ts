@@ -10,11 +10,11 @@ import { ScanResult } from 'docker-scan';
 import {
     MasterImageAPI,
     MasterImageCommand,
-    parseHarborConnectionString,
 } from '@personalhealthtrain/central-common';
 import { TokenAPI } from '@authelion/common';
 import { Ora } from 'ora';
 import { requireFromEnv } from './env';
+import { parseConnectionString } from './connection-string';
 
 export async function syncScanResultToCentralAPI(context: {
     scan: ScanResult,
@@ -23,7 +23,7 @@ export async function syncScanResultToCentralAPI(context: {
     context.spinner.start('Try to push meta information to central-api');
 
     try {
-        const connection = parseHarborConnectionString(requireFromEnv('CENTRAL_API_CONNECTION_STRING'));
+        const connection = parseConnectionString(requireFromEnv('CENTRAL_API_CONNECTION_STRING'));
 
         setConfig({
             driver: {

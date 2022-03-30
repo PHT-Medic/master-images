@@ -208,38 +208,42 @@ for (let i = 0; i < sum; i++) {
                 password: registries[i].password,
             };
 
-            for (let j = 0; j < images.length; j++) {
-                const repository = `${registries[i].host}/${images[j]}:latest`;
-                const image = docker.getImage(repository);
+            try {
+                for (let j = 0; j < images.length; j++) {
+                    const repository = `${registries[i].host}/${images[j]}:latest`;
+                    const image = docker.getImage(repository);
 
-                const stream = await image.push({
-                    authconfig: authConfig,
-                });
+                    const stream = await image.push({
+                        authconfig: authConfig,
+                    });
 
-                spinner.start(`Push: ${repository}`);
+                    spinner.start(`Push: ${repository}`);
 
-                pushPromises.push(new Promise((resolve, reject) => {
-                    docker.modem.followProgress(
-                        stream,
-                        (err: Error, res: any[]) => {
-                            if (err) {
-                                return reject(err);
-                            }
-
-                            const raw = res.pop();
-
-                            if (Object.prototype.toString.call(raw) === '[object Object]') {
-                                if (typeof raw?.errorDetail?.message === 'string') {
-                                    return reject(new Error(raw.errorDetail.message));
+                    pushPromises.push(new Promise((resolve, reject) => {
+                        docker.modem.followProgress(
+                            stream,
+                            (err: Error, res: any[]) => {
+                                if (err) {
+                                    return reject(err);
                                 }
-                            }
 
-                            spinner.info(`Pushed: ${repository}`);
+                                const raw = res.pop();
 
-                            return resolve(res);
-                        },
-                    );
-                }));
+                                if (Object.prototype.toString.call(raw) === '[object Object]') {
+                                    if (typeof raw?.errorDetail?.message === 'string') {
+                                        return reject(new Error(raw.errorDetail.message));
+                                    }
+                                }
+
+                                spinner.info(`Pushed: ${repository}`);
+
+                                return resolve(res);
+                            },
+                        );
+                    }));
+                }
+            } catch (e) {
+                spinner.fail(`Push to registry ${registries[i].host} failed`);
             }
         }
 
