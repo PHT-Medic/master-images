@@ -1,0 +1,10 @@
+minio
+numpy
+pandas
+scikit-learn
+skimage
+torch
+torchvision
+pydicom
+matplotlib
+tqdm
