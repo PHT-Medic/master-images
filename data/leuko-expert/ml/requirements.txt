@@ -2,7 +2,7 @@ minio
 numpy
 pandas
 scikit-learn
-skimage
+scikit-image
 torch
 torchvision
 pydicom
