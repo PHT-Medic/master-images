@@ -21,7 +21,7 @@
     ],
     "license": "MIT",
     "dependencies": {
-        "@personalhealthtrain/central-common": "^1.3.24",
+        "@personalhealthtrain/central-common": "^1.3.25",
         "@trapi/client": "^2.0.5",
         "@typescript-error/core": "^1.1.3",
         "@authelion/common": "^0.0.10",
