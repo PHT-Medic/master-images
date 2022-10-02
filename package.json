@@ -36,7 +36,7 @@
         "ts-node": "^10.9.1"
     },
     "devDependencies": {
-        "@tada5hi/eslint-config-typescript": "^1.0.4",
+        "@tada5hi/eslint-config-typescript": "^1.0.7",
         "@types/dockerode": "^3.3.9",
         "@types/node": "^18.7.23",
         "eslint": "^8.19.0",
