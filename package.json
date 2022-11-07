@@ -1,6 +1,6 @@
 {
     "name": "master-images",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Scan & push docker images and push to docker registry.",
     "author": {
         "name": "Peter Placzek",
