@@ -5,7 +5,7 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import { BaseError } from '@typescript-error/core';
+import { BaseError } from 'ebec';
 
 export function parseConnectionString(connectionString: string): {
     host: string,

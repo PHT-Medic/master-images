@@ -5,13 +5,13 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import { setConfig, useClient } from '@trapi/client';
+import { setConfig, useClient } from 'hapic';
 import { ScanResult } from 'docker-scan';
 import {
     MasterImageAPI,
     MasterImageCommand,
 } from '@personalhealthtrain/central-common';
-import { TokenAPI } from '@authelion/common';
+import { TokenAPI } from '@hapic/oauth2';
 import { Ora } from 'ora';
 import { requireFromEnv } from './env';
 import { parseConnectionString } from './connection-string';
@@ -36,6 +36,7 @@ export async function syncScanResultToCentralAPI(context: {
 
         const tokenAPI = new TokenAPI(client.driver);
         const token = await tokenAPI.create({
+            grant_type: 'robot_credentials',
             id: connection.user,
             secret: connection.password,
         });
