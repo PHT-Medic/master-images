@@ -11,7 +11,7 @@ import { ScanResult, scanDirectory } from 'docker-scan';
 import { config } from 'dotenv';
 import chalk from 'chalk';
 import * as tar from 'tar-fs';
-import { requireFromEnv, syncScanResultToCentralAPI } from './utils';
+import { requireFromEnv } from './utils';
 import { RegistryEnv } from './constants';
 import { RegistryConfig } from './type';
 
@@ -87,20 +87,6 @@ for (let i = 0; i < sum; i++) {
 
         console.log(e);
         process.exit(1);
-    }
-
-    try {
-        await syncScanResultToCentralAPI({
-            scan,
-            spinner,
-        });
-        spinner.succeed('Synced with Central-API');
-    } catch (e) {
-        if (e instanceof Error) {
-            spinner.fail('Push to Central-API failed...');
-        }
-
-        console.log('failed', e);
     }
 
     const images: string[] = [];
