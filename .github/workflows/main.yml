@@ -28,7 +28,7 @@ jobs:
 
             -   name: Push to dev
                 env:
-                    CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }}, ${{ secrets.DOCKER_REGISTRY }}
-                    REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER  }}, ${{ secrets.REGISTRY_USERNAME  }}
-                    REGISTRY_PASSWORD: ${{ secrets.DEV_REGISTRY_PASSWORD }}, ${{ secrets.REGISTRY_PASSWORD }}
+                    CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }},${{ secrets.DOCKER_REGISTRY }}
+                    REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER  }},${{ secrets.REGISTRY_USERNAME  }}
+                    REGISTRY_PASSWORD: ${{ secrets.DEV_REGISTRY_PASSWORD }},${{ secrets.REGISTRY_PASSWORD }}
                 run: npm run start
