@@ -5,12 +5,12 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import path from 'path';
+import path from 'node:path';
 import DockerClient, { AuthConfig } from 'dockerode';
 import { ScanResult, scanDirectory } from 'docker-scan';
 import { config } from 'dotenv';
 import chalk from 'chalk';
-import * as tar from 'tar-fs';
+import tar from 'tar-fs';
 import { requireFromEnv } from './utils';
 import { RegistryEnv } from './constants';
 import { RegistryConfig } from './type';
