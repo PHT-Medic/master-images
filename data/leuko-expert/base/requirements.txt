@@ -4,3 +4,7 @@ pandas
 neurolab
 scikit-learn
 missingpy
+requests
+fpdf
+pycap
+matplotlib
