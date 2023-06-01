@@ -2,8 +2,9 @@ name: Build
 
 on:
     push:
-        tags:
-            - v*
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
 
 jobs:
     build:
@@ -26,7 +27,7 @@ jobs:
                     npm ci
                     npm run build
 
-            -   name: Push to dev
+            -   name: Deploy images
                 env:
                     CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }},${{ secrets.DOCKER_REGISTRY }}
                     REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER  }},${{ secrets.REGISTRY_USERNAME  }}
