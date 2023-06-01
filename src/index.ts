@@ -6,14 +6,16 @@
  */
 
 import path from 'node:path';
-import DockerClient, { AuthConfig } from 'dockerode';
-import { ScanResult, scanDirectory } from 'docker-scan';
+import type { AuthConfig } from 'dockerode';
+import DockerClient from 'dockerode';
+import type { ScanResult } from 'docker-scan';
+import { scanDirectory } from 'docker-scan';
 import { config } from 'dotenv';
 import chalk from 'chalk';
 import tar from 'tar-fs';
 import { requireFromEnv } from './utils';
 import { RegistryEnv } from './constants';
-import { RegistryConfig } from './type';
+import type { RegistryConfig } from './type';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ora = require('ora');
