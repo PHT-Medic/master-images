@@ -33,7 +33,7 @@
         "@tada5hi/eslint-config-typescript": "^1.1.9",
         "@types/dockerode": "^3.3.18",
         "@types/node": "^20.2.5",
-        "eslint": "^8.42.0",
+        "eslint": "^8.43.0",
         "typescript": "^5.1.3"
     }
 }
