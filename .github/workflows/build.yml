@@ -1,4 +1,4 @@
-name: build
+name: Build
 
 on:
     push:
@@ -12,7 +12,7 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [16.x]
+                node-version: [ 18.x ]
 
         steps:
             -   uses: actions/checkout@v3
@@ -26,3 +26,10 @@ jobs:
                 run: |
                     npm ci
                     npm run build
+
+            -   name: Deploy images
+                env:
+                    CONTAINER_REGISTRY: ${{ secrets.DEV_REGISTRY }},${{ secrets.DOCKER_REGISTRY }}
+                    REGISTRY_USERNAME: ${{ secrets.DEV_REGISTRY_USER  }},${{ secrets.REGISTRY_USERNAME  }}
+                    REGISTRY_PASSWORD: ${{ secrets.DEV_REGISTRY_PASSWORD }},${{ secrets.REGISTRY_PASSWORD }}
+                run: npm run start

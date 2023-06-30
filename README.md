@@ -49,3 +49,7 @@ If you have any questions, regarding creating & integrating own master-images,
 feel free to open an issue or start a [discussion](https://github.com/PHT-Medic/master-images/discussions).
 
 
+## Adding a registry target
+Add address and credentials to the repository sec
+
+
