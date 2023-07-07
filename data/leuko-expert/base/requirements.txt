@@ -1,6 +1,6 @@
 minio
 numpy
-pandas
+pandas == 2.0.3
 neurolab
 scikit-learn
 missingpy
@@ -8,3 +8,4 @@ requests
 fpdf
 pycap
 matplotlib
+sdv
