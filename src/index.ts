@@ -1,253 +1,145 @@
 /*
- * Copyright (c) 2021.
+ * Copyright (c) 2023.
  * Author Peter Placzek (tada5hi)
  * For the full copyright and license information,
  * view the LICENSE file that was distributed with this source code.
  */
 
-import path from 'node:path';
-import type { AuthConfig } from 'dockerode';
-import DockerClient from 'dockerode';
-import type { ScanResult } from 'docker-scan';
+import { consola } from 'consola';
+import cac from 'cac';
 import { scanDirectory } from 'docker-scan';
-import { config } from 'dotenv';
-import chalk from 'chalk';
-import tar from 'tar-fs';
-import { requireFromEnv } from './utils';
-import { RegistryEnv } from './constants';
-import type { RegistryConfig } from './type';
+import { SCAN_IMAGE_PATH } from './constants';
+import type { DockerModemStepInfo, DockerRegistry } from './core';
+import {
+    buildImage,
+    buildImages,
+    getRegistryConfig,
+    getRegistryConfigWithFallback,
+    pushImage,
+    pushImages,
+    tagImage,
+    tagImages,
+} from './core';
+import {
+    isDockerModemStreamRecord,
+    parseDockerModemStepString,
+} from './core/docker/utils/modem';
+import { isNewLineCharacter, removeNewLineCharacter } from './utils';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const ora = require('ora');
+const cli = cac();
 
-config({
-    path: path.resolve(__dirname, '../.env'),
-});
+cli.option('--registry <registry>', 'Provide a registry');
 
-// Module init
-const docker = new DockerClient();
+let stepInfo : DockerModemStepInfo | undefined;
 
-// Constants
+const onCompleted = () => {
+    if (stepInfo) {
+        consola.success(`Step ${stepInfo.current}/${stepInfo.total} : Executed.`);
+    }
+};
+const onProgress = (input: any) => {
+    if (isNewLineCharacter(input.stream)) {
+        return;
+    }
 
-const registryHostSuffix = 'master';
-const scanDirectoryPath : string = path.join(__dirname, '..', 'data');
+    if (isDockerModemStreamRecord(input)) {
+        const step = parseDockerModemStepString(input.stream);
+        if (step) {
+            if (stepInfo) {
+                consola.success(`Step ${stepInfo.current}/${stepInfo.total} : Executed.`);
+            }
 
-const envAggregation : Record<RegistryEnv, string[]> = {
-    [RegistryEnv.HOST]: requireFromEnv(RegistryEnv.HOST).split(','),
-    [RegistryEnv.USERNAME]: requireFromEnv(RegistryEnv.USERNAME).split(','),
-    [RegistryEnv.PASSWORD]: requireFromEnv(RegistryEnv.PASSWORD).split(','),
+            consola.info(removeNewLineCharacter(input.stream));
+            consola.start(`Step ${step.current}/${step.total} : Executing...`);
+
+            stepInfo = step;
+        }
+    }
 };
 
-if (
-    envAggregation[RegistryEnv.HOST].length !== envAggregation[RegistryEnv.PASSWORD].length ||
-    envAggregation[RegistryEnv.PASSWORD].length !== envAggregation[RegistryEnv.USERNAME].length
-) {
-    console.log(chalk.bold('The amount of host, username & password data must be of the same size.'));
-    process.exit(0);
-}
-
-const registries : RegistryConfig[] = [];
-
-const sum = envAggregation[RegistryEnv.HOST].length;
-for (let i = 0; i < sum; i++) {
-    let host : string = envAggregation[RegistryEnv.HOST][i];
-
-    if (
-        host.startsWith('http://') ||
-        host.startsWith('https://')
-    ) {
-        const parsed = new URL(host);
-        host = parsed.hostname;
-    }
-
-    registries.push({
-        host,
-        username: envAggregation[RegistryEnv.USERNAME][i],
-        password: envAggregation[RegistryEnv.PASSWORD][i],
-    });
-}
-
-(async () => {
-    console.log(chalk.bold('Image scanning, building and publishing'));
-
-    const spinner = ora({
-        spinner: 'dots',
+cli
+    .command('list', 'List all images')
+    .action(async () => {
+        const scanResult = await scanDirectory(SCAN_IMAGE_PATH);
+        scanResult.images.map((image) => consola.info(image.virtualPath));
     });
 
-    let scan : ScanResult;
-
-    try {
-        spinner.start('Scanning directory');
-
-        scan = await scanDirectory(scanDirectoryPath);
-
-        spinner.succeed('Scanned');
-    } catch (e) {
-        if (e instanceof Error) {
-            spinner.fail('Could not scan directory');
+cli
+    .command('build [dir]', 'Build image(s)')
+    .action(async (
+        image: string | undefined,
+        options: { registry: string },
+    ) => {
+        let registry : DockerRegistry | undefined;
+        if (options.registry) {
+            registry = getRegistryConfigWithFallback(options.registry);
         }
 
-        console.log(e);
-        process.exit(1);
-    }
+        const scanResult = await scanDirectory(SCAN_IMAGE_PATH);
+        if (image) {
+            const index = scanResult.images.findIndex(
+                (el) => el.virtualPath === image,
+            );
+            if (index === -1) {
+                consola.warn(`Image ${image} could not be found.`);
+                process.exit(1);
+            }
 
-    const images: string[] = [];
-
-    try {
-        spinner.start('Build');
-
-        const buildPromises: Promise<any>[] = [];
-        for (let i = 0; i < scan.images.length; i++) {
-            const image = `${registryHostSuffix}/${scan.images[i].virtualPath}`;
-
-            images.push(image);
-
-            const imageFilePath : string = path.join(scanDirectoryPath, scan.images[i].path);
-
-            const pack = tar.pack(imageFilePath);
-
-            const stream = await docker.buildImage(pack, {
-                t: image,
+            await buildImage({
+                registry,
+                image: scanResult.images[index],
+                options: {
+                    onCompleted,
+                    onProgress,
+                },
             });
-
-            spinner.start(`Build: ${image}`);
-
-            buildPromises.push(new Promise((resolve, reject) => {
-                docker.modem.followProgress(
-                    stream,
-                    (err: Error, res: any[]) => {
-                        if (err) return reject(err);
-
-                        const raw = res.pop();
-                        if (typeof raw?.errorDetail?.message === 'string') {
-                            return reject(new Error(raw.errorDetail.message));
-                        }
-
-                        spinner.info(`Built: ${image}`);
-
-                        return resolve(res);
-                    },
-                );
-            }));
+            return;
         }
 
-        await Promise.all(buildPromises);
+        await buildImages({
+            registry,
+            scanResult,
+            options: {
+                onCompleted,
+                onProgress,
+            },
+        });
+    });
 
-        spinner.succeed('Built');
-    } catch (e) {
-        if (e instanceof Error) {
-            spinner.fail('Build failed');
+cli
+    .command('push [dir]', 'Push image(s)')
+    .action(async (
+        image: string | undefined,
+        options: { registry: string },
+    ) => {
+        let registry : DockerRegistry | undefined;
+        if (options.registry) {
+            registry = getRegistryConfig(options.registry);
         }
 
-        console.log(e);
-        process.exit(1);
-    }
+        if (!registry) {
+            consola.warn(`Registry ${registry} could be found.`);
+            process.exit(1);
+        }
 
-    try {
-        spinner.start('Tagging');
-
-        const tagPromises: Promise<any>[] = [];
-
-        for (let i = 0; i < images.length; i++) {
-            for (let j = 0; j < registries.length; j++) {
-                const repository = `${registries[j].host}/${images[i]}`;
-
-                const tagPromise = new Promise<void>(((resolve, reject) => {
-                    spinner.start(`Tagging: ${repository}`);
-
-                    docker.getImage(`${images[i]}:latest`).tag({
-                        repo: repository,
-                    }, ((error, result) => {
-                        if (error) {
-                            error.path = repository;
-                            return reject(error);
-                        }
-
-                        spinner.info(`Tagged: ${repository}`);
-
-                        return resolve();
-                    }));
-                }));
-
-                tagPromises.push(tagPromise);
+        const scanResult = await scanDirectory(SCAN_IMAGE_PATH);
+        if (image) {
+            const index = scanResult.images.findIndex(
+                (el) => el.virtualPath === image,
+            );
+            if (index === -1) {
+                consola.warn(`Image ${image} could not be found.`);
+                process.exit(1);
             }
+
+            await tagImage(scanResult.images[index], registry);
+            await pushImage(scanResult.images[index], registry);
+            return;
         }
 
-        await Promise.all(tagPromises);
+        await tagImages(scanResult, registry);
+        await pushImages(scanResult, registry);
+    });
 
-        spinner.succeed('Tagged');
-    } catch (e) {
-        if (e instanceof Error) {
-            spinner.fail('Tagging failed');
-        }
-
-        console.log(e);
-        process.exit(1);
-    }
-
-    try {
-        spinner.start('Push images');
-
-        for (let i = 0; i < registries.length; i++) {
-            const authConfig : AuthConfig = {
-                serveraddress: registries[i].host,
-                username: registries[i].username,
-                password: registries[i].password,
-            };
-
-            try {
-                const pushPromises: Promise<any>[] = [];
-
-                for (let j = 0; j < images.length; j++) {
-                    const repository = `${registries[i].host}/${images[j]}:latest`;
-                    const image = docker.getImage(repository);
-
-                    const stream = await image.push({
-                        authconfig: authConfig,
-                    });
-
-                    spinner.start(`Push: ${repository}`);
-
-                    pushPromises.push(new Promise((resolve, reject) => {
-                        docker.modem.followProgress(
-                            stream,
-                            (err: Error, res: any[]) => {
-                                if (err) {
-                                    return reject(err);
-                                }
-
-                                const raw = res.pop();
-
-                                if (Object.prototype.toString.call(raw) === '[object Object]') {
-                                    if (typeof raw?.errorDetail?.message === 'string') {
-                                        return reject(new Error(raw.errorDetail.message));
-                                    }
-                                }
-
-                                spinner.info(`Pushed: ${repository}`);
-
-                                return resolve(res);
-                            },
-                        );
-                    }));
-                }
-
-                await Promise.all(pushPromises);
-            } catch (e) {
-                spinner.fail(`Push to registry ${registries[i].host} failed`);
-            }
-        }
-
-        spinner.succeed('Pushed');
-    } catch (e) {
-        if (e instanceof Error) {
-            spinner.fail('Push failed');
-        }
-
-        console.log('failed', e);
-        process.exit(1);
-    }
-
-    console.log(chalk.gray.underline('Finished'));
-    process.exit(0);
-})();
+cli.help();
+cli.parse();

@@ -5,8 +5,16 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
+import path from 'node:path';
+
 export enum RegistryEnv {
     HOST = 'CONTAINER_REGISTRY',
     USERNAME = 'REGISTRY_USERNAME',
     PASSWORD = 'REGISTRY_PASSWORD',
 }
+
+export const SCAN_IMAGE_PATH = path.join(
+    __dirname,
+    '..',
+    'data',
+);
