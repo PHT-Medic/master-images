@@ -52,6 +52,10 @@ jobs:
                 uses: ./.github/actions/install
                 with:
                     node-version: ${{ env.PRIMARY_NODE_VERSION }}
+
+            -   name: Build
+                uses: ./.github/actions/build
+
             -   name: Build an image
                 run: npm run cli -- build python/base
 
