@@ -11,9 +11,9 @@
         "url": "https://github.com/tada5hi"
     },
     "scripts": {
-        "cli-dev": "ts-node src/index.ts",
         "build": "rm -rf ./dist && tsc",
-        "start": "ts-node src/index.ts",
+        "cli": "node dist/index.js",
+        "cli-dev": "ts-node src/index.ts",
         "lint": "eslint --ext .ts,.vue,.js ./src/",
         "lint:fix": "npm run lint -- --fix"
     },
