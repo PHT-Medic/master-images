@@ -5,11 +5,49 @@ This repository contains all docker images, with which an analysis algorithm can
 
 **Table of Contents**
 
-- [Structure](#structure)
-- [Programing Languages](#programing-languages)
+- [Usage](#usage)
+- [Folder Structure](#folder-structure)
 - [Contributing](#contributing)
 
-## Structure
+## Usage
+Master images can be developed or deployed by defining them in the `data` directory.
+How this works can be looked up in detail [here](#folder-structure).
+
+After a new master image is created it can be tested locally.
+The following commands can be executed locally for this purpose.
+
+`Stable`
+```shell
+$ npx master-images@latest --help
+```
+
+`Beta`
+```shell
+$ npx master-images@beta --help
+```
+
+The output should look like this:
+
+```shell
+Usage:
+  $ master-images <command> [options]
+
+Commands:
+  list         List all images
+  build [dir]  Build image(s)
+  push [dir]   Push image(s)
+
+For more info, run any command with the `--help` flag:
+  $ master-images list --help
+  $ master-images build --help
+  $ master-images push --help
+
+Options:
+  --registry <registry>  Provide a registry
+  -h, --help             Display this message
+```
+
+## Folder Structure
 
 The **data** folder contains all master images.
 Each master image is assigned to a group (Many-To-One).
@@ -37,7 +75,6 @@ The `data` folder therefore contains programming language specific images.
 On the other hand, the folder also contains master images which might be project specific or 
 aren't aimed for a specific language.
 
-## Programing Languages
 The main supported programming languages at the moment are:
 - Python
 - R

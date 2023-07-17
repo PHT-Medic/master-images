@@ -26,7 +26,7 @@ import {
 } from './core/docker/utils/modem';
 import { isNewLineCharacter, removeNewLineCharacter } from './utils';
 
-const cli = cac();
+const cli = cac('master-images');
 
 cli.option('--registry <registry>', 'Provide a registry');
 
