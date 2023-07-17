@@ -1,6 +1,6 @@
 {
     "name": "master-images",
-    "version": "2.1.0",
+    "version": "1.0.0",
     "description": "Scan & push docker images and push to docker registry.",
     "files": [
         "dist",
