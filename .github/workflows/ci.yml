@@ -39,9 +39,25 @@ jobs:
                   node-version: ${{ env.PRIMARY_NODE_VERSION }}
             - name: Build
               uses: ./.github/actions/build
+
+    test:
+        name: Test
+        needs: [ build ]
+        runs-on: [ self-hosted, docker, linux, x64 ]
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            -   name: Install
+                uses: ./.github/actions/install
+                with:
+                    node-version: ${{ env.PRIMARY_NODE_VERSION }}
+            -   name: Build an image
+                run: npm run cli -- build python/base
+
     release:
         name: Release
-        needs: [build]
+        needs: [build, test]
         runs-on: [ self-hosted, docker, linux, x64 ]
         steps:
             -   name: Checkout
