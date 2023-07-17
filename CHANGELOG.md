@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/PHT-Medic/master-images/compare/v1.0.0...v1.0.1) (2023-07-17)
+
+
+### Bug Fixes
+
+* add shebang header to cli script ([6443dd0](https://github.com/PHT-Medic/master-images/commit/6443dd000ef3a4a3ef13332e6fbdb7ff68537d9d))
+
 # 1.0.0 (2023-07-17)
 
 
