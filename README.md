@@ -16,7 +16,7 @@ How this works can be looked up in detail [here](#folder-structure).
 After a new master image is created it can be tested locally.
 The following commands can be executed locally for this purpose.
 
-`Stable`
+`Latest`
 ```shell
 $ npx master-images@latest --help
 ```
