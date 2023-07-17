@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/PHT-Medic/master-images/compare/v1.0.1...v1.0.2) (2023-07-17)
+
+
+### Bug Fixes
+
+* update description package.json ([9cdae97](https://github.com/PHT-Medic/master-images/commit/9cdae971f9355ebdc687eecd845c251a2d788294))
+
 ## [1.0.1](https://github.com/PHT-Medic/master-images/compare/v1.0.0...v1.0.1) (2023-07-17)
 
 
