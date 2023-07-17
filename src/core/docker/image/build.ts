@@ -5,13 +5,13 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import type { Image, ScanResult } from 'docker-scan';
+import type { Image } from 'docker-scan';
 import path from 'node:path';
 import tar from 'tar-fs';
 import { SCAN_IMAGE_PATH } from '../../../constants';
 import { useDockerDaemon } from '../daemon';
 import type { DockerRegistry } from '../type';
-import { isDockerModemResponseValid } from '../utils';
+import { buildImageURL, extendImageOptions, isDockerModemResponseValid } from '../utils';
 import type { ImageOptions } from './type';
 
 export async function buildImage(context: {
@@ -19,9 +19,7 @@ export async function buildImage(context: {
     registry?: DockerRegistry,
     options?: ImageOptions
 }) {
-    const imageURL = context.registry ?
-        `${context.registry.host}/${context.image.virtualPath}` :
-        context.image.virtualPath;
+    const imageURL = await buildImageURL(context.image, context.options, context.registry);
 
     const imageFilePath : string = path.join(SCAN_IMAGE_PATH, context.image.path);
 
@@ -57,15 +55,17 @@ export async function buildImage(context: {
     });
 }
 export async function buildImages(context: {
-    scanResult: ScanResult,
+    images: Image[],
     registry?: DockerRegistry,
     options?: ImageOptions
 }) {
     const promises: Promise<any>[] = [];
 
-    for (let i = 0; i < context.scanResult.images.length; i++) {
+    context.options = await extendImageOptions(context.options);
+
+    for (let i = 0; i < context.images.length; i++) {
         promises.push(buildImage({
-            image: context.scanResult.images[i],
+            image: context.images[i],
             registry: context.registry,
             options: context.options,
         }));

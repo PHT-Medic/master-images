@@ -18,3 +18,10 @@ export const SCAN_IMAGE_PATH = path.join(
     '..',
     'data',
 );
+
+export enum VersionTag {
+    LATEST = 'latest',
+    ALPHA = 'alpha',
+    BETA = 'beta',
+    NEXT = 'next',
+}

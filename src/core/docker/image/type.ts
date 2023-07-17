@@ -5,7 +5,10 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
+import type { VersionTag } from '../../../constants';
+
 export type ImageOptions = {
     onCompleted?(): any;
     onProgress?(input: any): any;
+    tag?: `${VersionTag}`
 };

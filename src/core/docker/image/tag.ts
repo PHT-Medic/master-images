@@ -5,17 +5,24 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import type { Image, ScanResult } from 'docker-scan';
+import type { Image } from 'docker-scan';
+import { withoutTrailingSlash } from '../../../utils';
 import { useDockerDaemon } from '../daemon';
 import type { DockerRegistry } from '../type';
+import { buildImageURL, extendImageOptions } from '../utils';
+import type { ImageOptions } from './type';
 
-export async function tagImage(scanImage: Image, registry: DockerRegistry) {
-    const imageURL = `${registry.host}/${scanImage.virtualPath}`;
+export async function tagImage(context: {
+    image: Image,
+    registry: DockerRegistry,
+    options?: ImageOptions
+}) {
+    const imageURL = await buildImageURL(context.image, context.options);
 
     const docker = useDockerDaemon();
     return new Promise<void>((resolve, reject) => {
-        docker.getImage(`${scanImage.virtualPath}:latest`).tag({
-            repo: imageURL,
+        docker.getImage(`${imageURL}`).tag({
+            repo: `${withoutTrailingSlash(context.registry.host)}/${imageURL}`,
         }, ((error) => {
             if (error) {
                 error.path = imageURL;
@@ -27,14 +34,21 @@ export async function tagImage(scanImage: Image, registry: DockerRegistry) {
     });
 }
 
-export async function tagImages(
-    scanResult: ScanResult,
+export async function tagImages(context: {
+    images: Image[],
     registry: DockerRegistry,
-) {
+    options?: ImageOptions
+}) {
     const promises: Promise<any>[] = [];
 
-    for (let i = 0; i < scanResult.images.length; i++) {
-        promises.push(tagImage(scanResult.images[i], registry));
+    context.options = await extendImageOptions(context.options);
+
+    for (let i = 0; i < context.images.length; i++) {
+        promises.push(tagImage({
+            image: context.images[i],
+            registry: context.registry,
+            options: context.options,
+        }));
     }
 
     await Promise.all(promises);

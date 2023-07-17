@@ -8,6 +8,7 @@
 import { consola } from 'consola';
 import cac from 'cac';
 import { scanDirectory } from 'docker-scan';
+import type { VersionTag } from './constants';
 import { SCAN_IMAGE_PATH } from './constants';
 import type { DockerModemStepInfo, DockerRegistry } from './core';
 import {
@@ -28,7 +29,7 @@ import { isNewLineCharacter, removeNewLineCharacter } from './utils';
 
 const cli = cac('master-images');
 
-cli.option('--registry <registry>', 'Provide a registry');
+cli.option('--tag <tag>', 'Specify a custom tag');
 
 let stepInfo : DockerModemStepInfo | undefined;
 
@@ -66,9 +67,10 @@ cli
 
 cli
     .command('build [dir]', 'Build image(s)')
+    .option('--registry <registry>', 'Provide a registry')
     .action(async (
         image: string | undefined,
-        options: { registry: string },
+        options: { registry?: string, tag?: `${VersionTag}` },
     ) => {
         let registry : DockerRegistry | undefined;
         if (options.registry) {
@@ -91,6 +93,7 @@ cli
                 options: {
                     onCompleted,
                     onProgress,
+                    tag: options.tag,
                 },
             });
             return;
@@ -98,19 +101,21 @@ cli
 
         await buildImages({
             registry,
-            scanResult,
+            images: scanResult.images,
             options: {
                 onCompleted,
                 onProgress,
+                tag: options.tag,
             },
         });
     });
 
 cli
     .command('push [dir]', 'Push image(s)')
+    .option('--registry [registry]', 'Provide a registry')
     .action(async (
         image: string | undefined,
-        options: { registry: string },
+        options: { registry: string, tag?: `${VersionTag}` },
     ) => {
         let registry : DockerRegistry | undefined;
         if (options.registry) {
@@ -132,13 +137,37 @@ cli
                 process.exit(1);
             }
 
-            await tagImage(scanResult.images[index], registry);
-            await pushImage(scanResult.images[index], registry);
+            await tagImage({
+                image: scanResult.images[index],
+                registry,
+                options: {
+                    tag: options.tag,
+                },
+            });
+            await pushImage({
+                image: scanResult.images[index],
+                registry,
+                options: {
+                    tag: options.tag,
+                },
+            });
             return;
         }
 
-        await tagImages(scanResult, registry);
-        await pushImages(scanResult, registry);
+        await tagImages({
+            images: scanResult.images,
+            registry,
+            options: {
+                tag: options.tag,
+            },
+        });
+        await pushImages({
+            images: scanResult.images,
+            registry,
+            options: {
+                tag: options.tag,
+            },
+        });
     });
 
 cli.help();

@@ -5,25 +5,33 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-import type { Image, ScanResult } from 'docker-scan';
+import type { Image } from 'docker-scan';
 import type { AuthConfig } from 'dockerode';
 import { useDockerDaemon } from '../daemon';
 import type { DockerRegistry } from '../type';
 import { isDockerModemResponseValid } from '../utils';
+import type { ImageOptions } from './type';
 
-export async function pushImage(scanImage: Image, registry: DockerRegistry) {
-    const imageURL = `${registry.host}/${scanImage.virtualPath}:latest`;
+export async function pushImage(context: {
+    image: Image,
+    registry: DockerRegistry,
+    options?: ImageOptions
+}) {
+    const imageURL = `${context.registry.host}/${context.image.virtualPath}:latest`;
 
     const docker = useDockerDaemon();
     const image = docker.getImage(imageURL);
 
     let authConfig : AuthConfig | undefined;
 
-    if (registry.username && registry.password) {
+    if (
+        context.registry.username &&
+        context.registry.password
+    ) {
         authConfig = {
-            serveraddress: registry.host,
-            username: registry.username,
-            password: registry.password,
+            serveraddress: context.registry.host,
+            username: context.registry.username,
+            password: context.registry.password,
         };
     }
 
@@ -46,14 +54,19 @@ export async function pushImage(scanImage: Image, registry: DockerRegistry) {
         );
     });
 }
-export async function pushImages(
-    scanResult: ScanResult,
+export async function pushImages(context: {
+    images: Image[],
     registry: DockerRegistry,
-) {
+    options?: ImageOptions
+}) {
     const promises: Promise<any>[] = [];
 
-    for (let i = 0; i < scanResult.images.length; i++) {
-        promises.push(pushImage(scanResult.images[i], registry));
+    for (let i = 0; i < context.images.length; i++) {
+        promises.push(pushImage({
+            image: context.images[i],
+            registry: context.registry,
+            options: context.options,
+        }));
     }
 
     await Promise.all(promises);
