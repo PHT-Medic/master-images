@@ -6,7 +6,7 @@
  */
 
 import type { Image } from 'docker-scan';
-import { getPackageJsonVersionTag, withoutTrailingSlash } from '../../../utils';
+import { cleanDoubleSlashes, getPackageJsonVersionTag, withoutTrailingSlash } from '../../../utils';
 import type { ImageOptions } from '../image/type';
 import type { DockerRegistry } from '../type';
 
@@ -22,13 +22,23 @@ export async function extendImageOptions(options?: ImageOptions) : Promise<Image
     return options;
 }
 
-export async function buildImageURL(
+type BuildImageURLContext = {
     image: Image,
     options?: ImageOptions,
     registry?: DockerRegistry,
-) : Promise<string> {
-    options = await extendImageOptions(options);
-    return `${registry ?
-        `${withoutTrailingSlash(registry.host)}/${image.virtualPath}` :
-        image.virtualPath}:${options.tag || 'latest'}`;
+    registryPath?: string
+};
+export async function buildImageURL(ctx: BuildImageURLContext) : Promise<string> {
+    ctx.options = await extendImageOptions(ctx.options);
+
+    let prefix = '';
+    if (ctx.registry) {
+        prefix = `${ctx.registry.host}/`;
+    }
+
+    if (ctx.registryPath) {
+        prefix += `${ctx.registryPath}/`;
+    }
+
+    return cleanDoubleSlashes(`${withoutTrailingSlash(`${prefix}${ctx.image.virtualPath}`)}:${ctx.options.tag || 'latest'}`);
 }

@@ -28,3 +28,9 @@ export function withoutTrailingSlash(input = '', queryParams = false): string {
 
     return (s0.slice(0, -1) || '/') + (s.length ? `?${s.join('?')}` : '');
 }
+
+export function cleanDoubleSlashes(input = ''): string {
+    return input.split('://')
+        .map((str) => str.replace(/\/{2,}/g, '/'))
+        .join('://');
+}

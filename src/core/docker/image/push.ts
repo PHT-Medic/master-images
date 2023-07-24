@@ -9,15 +9,16 @@ import type { Image } from 'docker-scan';
 import type { AuthConfig } from 'dockerode';
 import { useDockerDaemon } from '../daemon';
 import type { DockerRegistry } from '../type';
-import { isDockerModemResponseValid } from '../utils';
+import { buildImageURL, isDockerModemResponseValid } from '../utils';
 import type { ImageOptions } from './type';
 
 export async function pushImage(context: {
     image: Image,
     registry: DockerRegistry,
+    registryPath?: string,
     options?: ImageOptions
 }) {
-    const imageURL = `${context.registry.host}/${context.image.virtualPath}:latest`;
+    const imageURL = await buildImageURL(context);
 
     const docker = useDockerDaemon();
     const image = docker.getImage(imageURL);
@@ -57,6 +58,7 @@ export async function pushImage(context: {
 export async function pushImages(context: {
     images: Image[],
     registry: DockerRegistry,
+    registryPath?: string,
     options?: ImageOptions
 }) {
     const promises: Promise<any>[] = [];
@@ -65,6 +67,7 @@ export async function pushImages(context: {
         promises.push(pushImage({
             image: context.images[i],
             registry: context.registry,
+            registryPath: context.registryPath,
             options: context.options,
         }));
     }

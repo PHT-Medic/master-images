@@ -17,9 +17,10 @@ import type { ImageOptions } from './type';
 export async function buildImage(context: {
     image: Image,
     registry?: DockerRegistry,
+    registryPath?: string,
     options?: ImageOptions
 }) {
-    const imageURL = await buildImageURL(context.image, context.options, context.registry);
+    const imageURL = await buildImageURL(context);
 
     const imageFilePath : string = path.join(SCAN_IMAGE_PATH, context.image.path);
 
@@ -57,6 +58,7 @@ export async function buildImage(context: {
 export async function buildImages(context: {
     images: Image[],
     registry?: DockerRegistry,
+    registryPath?: string,
     options?: ImageOptions
 }) {
     const promises: Promise<any>[] = [];
@@ -67,6 +69,7 @@ export async function buildImages(context: {
         promises.push(buildImage({
             image: context.images[i],
             registry: context.registry,
+            registryPath: context.registryPath,
             options: context.options,
         }));
     }

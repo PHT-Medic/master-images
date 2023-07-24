@@ -18,9 +18,7 @@ import {
     getRegistryConfig,
     getRegistryConfigWithFallback,
     pushImage,
-    pushImages,
-    tagImage,
-    tagImages,
+    pushImages, tagImage, tagImages,
 } from './core';
 import {
     isDockerModemStreamRecord,
@@ -69,9 +67,10 @@ cli
 cli
     .command('build [dir]', 'Build image(s)')
     .option('--registry <registry>', 'Provide a registry')
+    .option('--registryPath <registryPath>', 'Provide a registry path')
     .action(async (
         image: string | undefined,
-        options: { registry?: string, tag?: `${VersionTag}` },
+        options: { registry?: string, registryPath?: string, tag?: `${VersionTag}` },
     ) => {
         let registry : DockerRegistry | undefined;
         if (options.registry) {
@@ -90,6 +89,7 @@ cli
 
             await buildImage({
                 registry,
+                registryPath: options.registryPath,
                 image: scanResult.images[index],
                 options: {
                     onCompleted,
@@ -102,6 +102,7 @@ cli
 
         await buildImages({
             registry,
+            registryPath: options.registryPath,
             images: scanResult.images,
             options: {
                 onCompleted,
@@ -114,9 +115,10 @@ cli
 cli
     .command('push [dir]', 'Push image(s)')
     .option('--registry [registry]', 'Provide a registry')
+    .option('--registryPath <registryPath>', 'Provide a registry path')
     .action(async (
         image: string | undefined,
-        options: { registry: string, tag?: `${VersionTag}` },
+        options: { registry: string, registryPath?: string, tag?: `${VersionTag}` },
     ) => {
         let registry : DockerRegistry | undefined;
         if (options.registry) {
@@ -138,16 +140,74 @@ cli
                 process.exit(1);
             }
 
-            await tagImage({
+            await pushImage({
                 image: scanResult.images[index],
                 registry,
+                registryPath: options.registryPath,
                 options: {
                     tag: options.tag,
                 },
             });
-            await pushImage({
+            return;
+        }
+
+        await pushImages({
+            images: scanResult.images,
+            registry,
+            registryPath: options.registryPath,
+            options: {
+                tag: options.tag,
+            },
+        });
+    });
+
+cli
+    .command('tag [dir]', 'Tag image(s)')
+    .option('--registryIn [registryIn]', 'Provide a in registry')
+    .option('--registryPathIn <registryPathIn>', 'Provide a in registry path')
+    .option('--registryOut [registryOut]', 'Provide a out registry')
+    .option('--registryPathOut <registryPathOut>', 'Provide a out registry path')
+    .action(async (
+        image: string | undefined,
+        options: {
+            registryIn: string,
+            registryPathIn?: string,
+            registryOut: string,
+            registryPathOut?: string,
+            tag?: `${VersionTag}`
+        },
+    ) => {
+        let registryIn : DockerRegistry | undefined;
+        let registryOut : DockerRegistry | undefined;
+        if (options.registryIn) {
+            registryIn = getRegistryConfig(options.registryIn);
+        }
+
+        if (options.registryOut) {
+            registryOut = getRegistryConfig(options.registryOut);
+        }
+
+        if (!registryIn || !registryOut) {
+            consola.warn(`Registry ${registryIn} could be found.`);
+            process.exit(1);
+        }
+
+        const scanResult = await scanDirectory(SCAN_IMAGE_PATH);
+        if (image) {
+            const index = scanResult.images.findIndex(
+                (el) => el.virtualPath === image,
+            );
+            if (index === -1) {
+                consola.warn(`Image ${image} could not be found.`);
+                process.exit(1);
+            }
+
+            await tagImage({
                 image: scanResult.images[index],
-                registry,
+                registryIn,
+                registryPathIn: options.registryPathIn,
+                registryOut,
+                registryPathOut: options.registryPathOut,
                 options: {
                     tag: options.tag,
                 },
@@ -157,14 +217,10 @@ cli
 
         await tagImages({
             images: scanResult.images,
-            registry,
-            options: {
-                tag: options.tag,
-            },
-        });
-        await pushImages({
-            images: scanResult.images,
-            registry,
+            registryIn,
+            registryPathIn: options.registryPathIn,
+            registryOut,
+            registryPathOut: options.registryPathOut,
             options: {
                 tag: options.tag,
             },

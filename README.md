@@ -86,7 +86,29 @@ If you have any questions, regarding creating & integrating own master-images,
 feel free to open an issue or start a [discussion](https://github.com/PHT-Medic/master-images/discussions).
 
 
-## Adding a registry target
-Add address and credentials to the repository sec
+## Webhook
+
+To set up a webhook for the [webhooks](https://github.com/adnanh/webhook) on the harbor instance, 
+the following configuration should be used.
+Here `<secret>`, `<registry>` and `<registryPath>` must be replaced with the appropriate values.
+
+```json
+[
+  {
+    "id": "master-images",
+    "execute-command": "npx master-images@latest build -- --registry <registry> --registryPath <registryPath>",
+    "trigger-rule": {
+          "match": {
+            "type": "payload-hash-sha1",
+            "secret": "<secret>",
+            "parameter": {
+              "source": "header",
+              "name": "X-Hub-Signature"
+            }
+          }
+    }
+  }
+]
+```
 
 

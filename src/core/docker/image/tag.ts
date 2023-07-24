@@ -6,7 +6,6 @@
  */
 
 import type { Image } from 'docker-scan';
-import { withoutTrailingSlash } from '../../../utils';
 import { useDockerDaemon } from '../daemon';
 import type { DockerRegistry } from '../type';
 import { buildImageURL, extendImageOptions } from '../utils';
@@ -14,18 +13,32 @@ import type { ImageOptions } from './type';
 
 export async function tagImage(context: {
     image: Image,
-    registry: DockerRegistry,
+    registryIn: DockerRegistry,
+    registryPathIn?: string,
+    registryOut: DockerRegistry,
+    registryPathOut?: string,
     options?: ImageOptions
 }) {
-    const imageURL = await buildImageURL(context.image, context.options);
+    const tagIn = await buildImageURL({
+        image: context.image,
+        options: context.options,
+        registry: context.registryIn,
+        registryPath: context.registryPathIn,
+    });
+
+    const tagOut = await buildImageURL({
+        image: context.image,
+        options: context.options,
+        registry: context.registryOut,
+        registryPath: context.registryPathOut,
+    });
 
     const docker = useDockerDaemon();
     return new Promise<void>((resolve, reject) => {
-        docker.getImage(`${imageURL}`).tag({
-            repo: `${withoutTrailingSlash(context.registry.host)}/${imageURL}`,
+        docker.getImage(tagIn).tag({
+            repo: tagOut,
         }, ((error) => {
             if (error) {
-                error.path = imageURL;
                 return reject(error);
             }
 
@@ -36,7 +49,10 @@ export async function tagImage(context: {
 
 export async function tagImages(context: {
     images: Image[],
-    registry: DockerRegistry,
+    registryIn: DockerRegistry,
+    registryPathIn?: string,
+    registryOut: DockerRegistry,
+    registryPathOut?: string,
     options?: ImageOptions
 }) {
     const promises: Promise<any>[] = [];
@@ -46,7 +62,10 @@ export async function tagImages(context: {
     for (let i = 0; i < context.images.length; i++) {
         promises.push(tagImage({
             image: context.images[i],
-            registry: context.registry,
+            registryIn: context.registryIn,
+            registryPathIn: context.registryPathIn,
+            registryOut: context.registryOut,
+            registryPathOut: context.registryPathOut,
             options: context.options,
         }));
     }
