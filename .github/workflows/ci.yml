@@ -82,3 +82,17 @@ jobs:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
                 run: npx semantic-release
+
+            -   name: Webhook BETA
+                uses: distributhor/workflow-webhook@v3
+                if: ${{ github.ref_name == 'beta' }}
+                env:
+                    webhook_url: ${{ secrets.WEBHOOK_DEV_URL }}
+                    webhook_secret: ${{ secrets.WEBHOOK_DEV_SECRET }}
+
+            -   name: Webhook PROD
+                uses: distributhor/workflow-webhook@v3
+                if: ${{ github.ref_name == 'master' }}
+                env:
+                    webhook_url: ${{ secrets.WEBHOOK_PROD_URL }}
+                    webhook_secret: ${{ secrets.WEBHOOK_PROD_SECRET }}

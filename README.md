@@ -111,4 +111,23 @@ Here `<secret>`, `<registry>` and `<registryPath>` must be replaced with the app
 ]
 ```
 
+To register webhook as a service on the server create a service file `webhook.service` in
+`/etc/systemd/system` directory with the following content
 
+```bash
+[Unit]
+Description=Webhooks
+
+[Service]
+ExecStart=/usr/bin/webhook -hooks /opt/webhooks/hooks.json -hotreload
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Usage with systemctl:
+- `systemctl enable webhook.service` to enable the newly created service
+- `systemctl start webhook.service` to start the service
+Now check the service status using `service webhook status`
+
+Hook Address http://<ip>:9000/hooks/master-images
