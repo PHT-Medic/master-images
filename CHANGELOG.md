@@ -1,3 +1,15 @@
+# [1.1.0-beta.1](https://github.com/PHT-Medic/master-images/compare/v1.0.2...v1.1.0-beta.1) (2023-08-01)
+
+
+### Bug Fixes
+
+* add webhook execution workflow ([88d35fc](https://github.com/PHT-Medic/master-images/commit/88d35fcf404d1668fd47413b70dbb50f78bb14e5))
+
+
+### Features
+
+* add support for registry path option + extra tag command ([ece845d](https://github.com/PHT-Medic/master-images/commit/ece845da4f1cb16864997203a656d5b25a6b62c1))
+
 ## [1.0.2](https://github.com/PHT-Medic/master-images/compare/v1.0.1...v1.0.2) (2023-07-17)
 
 
