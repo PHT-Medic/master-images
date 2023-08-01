@@ -89,6 +89,7 @@ jobs:
                 env:
                     webhook_url: ${{ secrets.WEBHOOK_DEV_URL }}
                     webhook_secret: ${{ secrets.WEBHOOK_DEV_SECRET }}
+                    verbose: true
 
             -   name: Webhook PROD
                 uses: distributhor/workflow-webhook@v3
@@ -96,3 +97,4 @@ jobs:
                 env:
                     webhook_url: ${{ secrets.WEBHOOK_PROD_URL }}
                     webhook_secret: ${{ secrets.WEBHOOK_PROD_SECRET }}
+                    verbose: true
