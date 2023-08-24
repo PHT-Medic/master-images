@@ -34,7 +34,7 @@
         "docker-scan": "^1.1.0",
         "dockerode": "^3.3.5",
         "dotenv": "^16.3.1",
-        "semantic-release": "^21.0.7",
+        "semantic-release": "^21.1.0",
         "semver": "^7.5.4",
         "tar-fs": "^3.0.4",
         "ts-node": "^10.9.1"
