@@ -85,7 +85,7 @@ jobs:
 
             -   name: Webhook BETA
                 uses: distributhor/workflow-webhook@v3
-                if: ${{ github.ref_name == 'beta' }}
+                if: ${{ github.ref_name == 'xxx' }}
                 env:
                     webhook_url: ${{ secrets.WEBHOOK_DEV_URL }}
                     webhook_secret: ${{ secrets.WEBHOOK_DEV_SECRET }}
@@ -93,7 +93,7 @@ jobs:
 
             -   name: Webhook PROD
                 uses: distributhor/workflow-webhook@v3
-                if: ${{ github.ref_name == 'master' }}
+                if: ${{ github.ref_name == 'xxx' }}
                 env:
                     webhook_url: ${{ secrets.WEBHOOK_PROD_URL }}
                     webhook_secret: ${{ secrets.WEBHOOK_PROD_SECRET }}
