@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/PHT-Medic/master-images/compare/v2.0.0...v2.0.1) (2023-08-31)
+
+
+### Bug Fixes
+
+* read addition properties from config file ([a96d8d3](https://github.com/PHT-Medic/master-images/commit/a96d8d3aae2e68151092a340b09aa8569372aa9d))
+
 # [2.0.0](https://github.com/PHT-Medic/master-images/compare/v1.1.0...v2.0.0) (2023-08-31)
 
 
