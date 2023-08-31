@@ -29,9 +29,12 @@ export function buildConfig(input: OptionsInput) : Config {
             tag: VersionTag.LATEST,
         },
         validators: {
+            secret: (value) => zod.string().safeParse(value),
             port: (value) => zod.number().safeParse(value),
             registryHost: (value) => zod.string().safeParse(value),
             registryPath: (value) => zod.string().safeParse(value),
+            registryUser: (value) => zod.string().safeParse(value),
+            registryPassword: (value) => zod.string().safeParse(value),
             tag: (value) => zod.string().safeParse(value),
         },
         transformers: {

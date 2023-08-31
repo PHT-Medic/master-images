@@ -1,3 +1,39 @@
+# [3.0.0](https://github.com/PHT-Medic/master-images/compare/v2.0.1...v3.0.0) (2023-08-31)
+
+
+### Features
+
+* minor changes to bump version ([9a60922](https://github.com/PHT-Medic/master-images/commit/9a60922c8046daeee750185eefb13a337ae2cd1f))
+
+
+### BREAKING CHANGES
+
+* to v3
+
+## [2.0.1](https://github.com/PHT-Medic/master-images/compare/v2.0.0...v2.0.1) (2023-08-31)
+
+
+### Bug Fixes
+
+* read addition properties from config file ([a96d8d3](https://github.com/PHT-Medic/master-images/commit/a96d8d3aae2e68151092a340b09aa8569372aa9d))
+
+# [2.0.0](https://github.com/PHT-Medic/master-images/compare/v1.1.0...v2.0.0) (2023-08-31)
+
+
+### Build System
+
+* fix merge conflict ([aadaed8](https://github.com/PHT-Medic/master-images/commit/aadaed8b4853e41d8cc2d14bf0fb74c04c8305d7))
+
+
+### Features
+
+* allow setting root directory ([aa1c561](https://github.com/PHT-Medic/master-images/commit/aa1c5615020366af777831c15d5beec8ace12bce))
+
+
+### BREAKING CHANGES
+
+* bump to v2
+
 # [1.1.0](https://github.com/PHT-Medic/master-images/compare/v1.0.2...v1.1.0) (2023-08-31)
 
 
