@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/PHT-Medic/master-images/compare/v2.0.1...v3.0.0) (2023-08-31)
+
+
+### Features
+
+* minor changes to bump version ([9a60922](https://github.com/PHT-Medic/master-images/commit/9a60922c8046daeee750185eefb13a337ae2cd1f))
+
+
+### BREAKING CHANGES
+
+* to v3
+
 ## [2.0.1](https://github.com/PHT-Medic/master-images/compare/v2.0.0...v2.0.1) (2023-08-31)
 
 
