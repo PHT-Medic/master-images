@@ -1,3 +1,11 @@
+## [3.0.2](https://github.com/PHT-Medic/master-images/compare/v3.0.1...v3.0.2) (2023-08-31)
+
+
+### Bug Fixes
+
+* set tag argument for webhook spawn command ([34badd3](https://github.com/PHT-Medic/master-images/commit/34badd3f4c46c1d9035ff3e06aa61a91943ff295))
+* spawn command ([2b0928f](https://github.com/PHT-Medic/master-images/commit/2b0928fdd81de98ee5d722ecd9fed02f814ef76a))
+
 ## [3.0.1](https://github.com/PHT-Medic/master-images/compare/v3.0.0...v3.0.1) (2023-08-31)
 
 
