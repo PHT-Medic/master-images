@@ -1,3 +1,20 @@
+# [2.0.0](https://github.com/PHT-Medic/master-images/compare/v1.1.0...v2.0.0) (2023-08-31)
+
+
+### Build System
+
+* fix merge conflict ([aadaed8](https://github.com/PHT-Medic/master-images/commit/aadaed8b4853e41d8cc2d14bf0fb74c04c8305d7))
+
+
+### Features
+
+* allow setting root directory ([aa1c561](https://github.com/PHT-Medic/master-images/commit/aa1c5615020366af777831c15d5beec8ace12bce))
+
+
+### BREAKING CHANGES
+
+* bump to v2
+
 # [1.1.0](https://github.com/PHT-Medic/master-images/compare/v1.0.2...v1.1.0) (2023-08-31)
 
 
