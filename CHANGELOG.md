@@ -1,3 +1,10 @@
+# [1.1.0-beta.2](https://github.com/PHT-Medic/master-images/compare/v1.1.0-beta.1...v1.1.0-beta.2) (2023-08-31)
+
+
+### Features
+
+* add webhook command + file configuration ([10ef9a1](https://github.com/PHT-Medic/master-images/commit/10ef9a12370ef618cc313f32d45da60b6715917d))
+
 # [1.1.0-beta.1](https://github.com/PHT-Medic/master-images/compare/v1.0.2...v1.1.0-beta.1) (2023-08-01)
 
 
