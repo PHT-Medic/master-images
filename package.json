@@ -48,7 +48,7 @@
         "zod": "^3.22.2"
     },
     "devDependencies": {
-        "@tada5hi/eslint-config-typescript": "^1.2.2",
+        "@tada5hi/eslint-config-typescript": "^1.2.3",
         "@types/cross-spawn": "^6.0.2",
         "@types/dockerode": "^3.3.19",
         "@types/node": "^20.4.4",
