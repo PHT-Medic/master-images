@@ -24,7 +24,7 @@ export function registerCLIWebhookCommand(cli: CAC) {
         .action(async (
             options: CLICommandOptions & { port?: number, secret?: string },
         ) => {
-            const config = await createConfig();
+            const config = await createConfig(options.root);
 
             if (options.port) {
                 config.set('port', options.port);

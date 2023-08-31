@@ -12,6 +12,7 @@ import type { CLICommandOptions } from '../type';
 
 export function setCLICommandOptions(command: Command) : Command {
     return command
+        .option('--root <root>', 'Set the root directory path')
         .option('--tag <tag>', 'Set the tag')
         .option('--registry <registry>', 'Set the registry connection string')
         .option('--registryHost <registryHost>', 'Set the registry host')

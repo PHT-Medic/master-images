@@ -26,7 +26,7 @@ export function registerCLIBuildCommand(cli: CAC) {
             image: string | undefined,
             options: CLICommandOptions,
         ) => {
-            const config = await createConfig();
+            const config = await createConfig(options.root);
 
             applyCLICommandOptions(config, options);
 

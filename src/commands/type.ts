@@ -6,6 +6,7 @@
  */
 
 export type CLICommandOptions = {
+    root?: string,
     tag?: string,
     registry?: string,
     registryHost?: string,

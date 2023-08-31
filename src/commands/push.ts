@@ -11,7 +11,8 @@ import { scanDirectory } from 'docker-scan';
 import { createConfig } from '../config';
 import { SCAN_IMAGE_PATH } from '../constants';
 import { pushImage, pushImages } from '../core';
-import { setCLICommandOptions } from './utils/options';
+import type { CLICommandOptions } from './type';
+import { applyCLICommandOptions, setCLICommandOptions } from './utils/options';
 
 export function registerCLIPushCommand(cli: CAC) {
     const command = cli
@@ -22,8 +23,11 @@ export function registerCLIPushCommand(cli: CAC) {
     command
         .action(async (
             image: string | undefined,
+            options: CLICommandOptions,
         ) => {
-            const config = await createConfig();
+            const config = await createConfig(options.root);
+
+            applyCLICommandOptions(config, options);
 
             if (!config.has('registryHost')) {
                 consola.error('Registry host must be defined.');
