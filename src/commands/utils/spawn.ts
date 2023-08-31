@@ -16,7 +16,6 @@ export async function spawnCLIProcess(config: Config, command: string) {
         '--yes',
         `master-images@${tag}`,
         command,
-        '--',
     ];
 
     const keys: (keyof Options)[] = [
