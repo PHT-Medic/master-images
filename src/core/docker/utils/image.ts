@@ -6,39 +6,24 @@
  */
 
 import type { Image } from 'docker-scan';
-import { cleanDoubleSlashes, getPackageJsonVersionTag, withoutTrailingSlash } from '../../../utils';
-import type { ImageOptions } from '../image/type';
-import type { DockerRegistry } from '../type';
-
-export async function extendImageOptions(options?: ImageOptions) : Promise<ImageOptions> {
-    if (!options) {
-        options = {};
-    }
-
-    if (!options.tag) {
-        options.tag = await getPackageJsonVersionTag();
-    }
-
-    return options;
-}
+import type { Config } from '../../../config';
+import { cleanDoubleSlashes, withoutTrailingSlash } from '../../../utils';
 
 type BuildImageURLContext = {
     image: Image,
-    options?: ImageOptions,
-    registry?: DockerRegistry,
-    registryPath?: string
+    config: Config
 };
 export async function buildImageURL(ctx: BuildImageURLContext) : Promise<string> {
-    ctx.options = await extendImageOptions(ctx.options);
-
     let prefix = '';
-    if (ctx.registry) {
-        prefix = `${ctx.registry.host}/`;
+    const host = ctx.config.get('registryHost');
+    if (host) {
+        prefix = `${host}/`;
     }
 
-    if (ctx.registryPath) {
-        prefix += `${ctx.registryPath}/`;
+    const registryPath = ctx.config.get('registryPath');
+    if (registryPath) {
+        prefix += `${registryPath}/`;
     }
 
-    return cleanDoubleSlashes(`${withoutTrailingSlash(`${prefix}${ctx.image.virtualPath}`)}:${ctx.options.tag || 'latest'}`);
+    return cleanDoubleSlashes(`${withoutTrailingSlash(`${prefix}${ctx.image.virtualPath}`)}:${ctx.config.get('tag') || 'latest'}`);
 }

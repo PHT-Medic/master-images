@@ -7,16 +7,15 @@
 
 import type { Image } from 'docker-scan';
 import type { AuthConfig } from 'dockerode';
+import type { Config } from '../../../config';
 import { useDockerDaemon } from '../daemon';
-import type { DockerRegistry } from '../type';
 import { buildImageURL, isDockerModemResponseValid } from '../utils';
-import type { ImageOptions } from './type';
+import type { ImageHooks } from './type';
 
 export async function pushImage(context: {
     image: Image,
-    registry: DockerRegistry,
-    registryPath?: string,
-    options?: ImageOptions
+    config: Config,
+    hooks?: ImageHooks
 }) {
     const imageURL = await buildImageURL(context);
 
@@ -26,13 +25,13 @@ export async function pushImage(context: {
     let authConfig : AuthConfig | undefined;
 
     if (
-        context.registry.username &&
-        context.registry.password
+        context.config.has('registryUser') &&
+        context.config.has('registryPassword')
     ) {
         authConfig = {
-            serveraddress: context.registry.host,
-            username: context.registry.username,
-            password: context.registry.password,
+            serveraddress: context.config.get('registryHost') as string,
+            username: context.config.get('registryUser') as string,
+            password: context.config.get('registryPassword') as string,
         };
     }
 
@@ -57,18 +56,16 @@ export async function pushImage(context: {
 }
 export async function pushImages(context: {
     images: Image[],
-    registry: DockerRegistry,
-    registryPath?: string,
-    options?: ImageOptions
+    config: Config,
+    hooks?: ImageHooks
 }) {
     const promises: Promise<any>[] = [];
 
     for (let i = 0; i < context.images.length; i++) {
         promises.push(pushImage({
             image: context.images[i],
-            registry: context.registry,
-            registryPath: context.registryPath,
-            options: context.options,
+            config: context.config,
+            hooks: context.hooks,
         }));
     }
 

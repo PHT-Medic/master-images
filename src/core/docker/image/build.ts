@@ -8,17 +8,16 @@
 import type { Image } from 'docker-scan';
 import path from 'node:path';
 import tar from 'tar-fs';
+import type { Config } from '../../../config';
 import { SCAN_IMAGE_PATH } from '../../../constants';
 import { useDockerDaemon } from '../daemon';
-import type { DockerRegistry } from '../type';
-import { buildImageURL, extendImageOptions, isDockerModemResponseValid } from '../utils';
-import type { ImageOptions } from './type';
+import { buildImageURL, isDockerModemResponseValid } from '../utils';
+import type { ImageHooks } from './type';
 
 export async function buildImage(context: {
+    config: Config,
     image: Image,
-    registry?: DockerRegistry,
-    registryPath?: string,
-    options?: ImageOptions
+    hooks?: ImageHooks
 }) {
     const imageURL = await buildImageURL(context);
 
@@ -41,15 +40,15 @@ export async function buildImage(context: {
                     reject(new Error('Image could not be build.'));
                 }
 
-                if (context.options && context.options.onCompleted) {
-                    context.options.onCompleted();
+                if (context.hooks && context.hooks.onCompleted) {
+                    context.hooks.onCompleted();
                 }
 
                 return resolve(res);
             },
             (res: any) => {
-                if (context.options && context.options.onProgress) {
-                    context.options.onProgress(res);
+                if (context.hooks && context.hooks.onProgress) {
+                    context.hooks.onProgress(res);
                 }
             },
         );
@@ -57,20 +56,16 @@ export async function buildImage(context: {
 }
 export async function buildImages(context: {
     images: Image[],
-    registry?: DockerRegistry,
-    registryPath?: string,
-    options?: ImageOptions
+    config: Config,
+    hooks?: ImageHooks
 }) {
     const promises: Promise<any>[] = [];
 
-    context.options = await extendImageOptions(context.options);
-
     for (let i = 0; i < context.images.length; i++) {
         promises.push(buildImage({
+            config: context.config,
             image: context.images[i],
-            registry: context.registry,
-            registryPath: context.registryPath,
-            options: context.options,
+            hooks: context.hooks,
         }));
     }
 

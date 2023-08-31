@@ -38,3 +38,5 @@ sw.*
 
 /venv
 
+pht.config.*
+

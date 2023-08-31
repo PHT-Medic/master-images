@@ -5,7 +5,11 @@
  * view the LICENSE file that was distributed with this source code.
  */
 
-export type ImageHooks = {
-    onCompleted?(): any;
-    onProgress?(input: any): any
+export type CLICommandOptions = {
+    tag?: string,
+    registry?: string,
+    registryHost?: string,
+    registryPath?: string,
+    registryUser?: string,
+    registryPassword?: string
 };
