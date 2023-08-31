@@ -31,7 +31,7 @@ export function verifyWebhookRequestSignature(req: Request, config: Config) : bo
         }
 
         if (keysMissing.length > 0) {
-            consola.warn(`Request payload attributes ${keysMissing.join(', ')} is missing.`);
+            consola.warn(`Request payload attributes ${keysMissing.join(', ')} are missing.`);
             return undefined;
         }
 
