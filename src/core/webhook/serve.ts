@@ -9,7 +9,7 @@ import { Router, send } from 'routup';
 import { createJsonHandler } from '@routup/body';
 import { spawnCLIProcess } from '../../commands/utils/spawn';
 import type { Config } from '../../config';
-import { verifyWebhookRequest } from './verify';
+import { verifyWebhookRequestSignature } from './verify';
 
 export async function serveWebhook(
     config: Config,
@@ -24,7 +24,7 @@ export async function serveWebhook(
     router.use(createJsonHandler());
 
     router.use('/', async (req, res) => {
-        if (!verifyWebhookRequest(req, config)) {
+        if (!verifyWebhookRequestSignature(req, config)) {
             res.statusCode = 400;
 
             send(res, {
