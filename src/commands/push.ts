@@ -12,7 +12,7 @@ import { createConfig } from '../config';
 import { SCAN_IMAGE_PATH } from '../constants';
 import { pushImage, pushImages } from '../core';
 import type { CLICommandOptions } from './type';
-import { applyCLICommandOptions, setCLICommandOptions } from './utils/options';
+import { applyCLICommandOptions, setCLICommandOptions } from './utils';
 
 export function registerCLIPushCommand(cli: CAC) {
     const command = cli

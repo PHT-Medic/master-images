@@ -10,7 +10,7 @@ import { consola } from 'consola';
 import { createConfig } from '../config';
 import { serveWebhook } from '../core/webhook';
 import type { CLICommandOptions } from './type';
-import { setCLICommandOptions } from './utils/options';
+import { setCLICommandOptions } from './utils';
 
 export function registerCLIWebhookCommand(cli: CAC) {
     const command = cli

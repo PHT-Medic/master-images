@@ -23,6 +23,7 @@ export async function spawnCLIProcess(config: Config, command: string) {
         'registryPath',
         'registryUser',
         'registryPassword',
+        'tag',
     ];
 
     for (let i = 0; i < keys.length; i++) {

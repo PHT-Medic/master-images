@@ -12,8 +12,12 @@ import { createConfig } from '../config';
 import { SCAN_IMAGE_PATH } from '../constants';
 import { buildImage, buildImages } from '../core';
 import type { CLICommandOptions } from './type';
-import { onCompletedHook, onProgressHook } from './utils/hooks';
-import { applyCLICommandOptions, setCLICommandOptions } from './utils/options';
+import {
+    applyCLICommandOptions,
+    onCompletedHook,
+    onProgressHook,
+    setCLICommandOptions,
+} from './utils';
 
 export function registerCLIBuildCommand(cli: CAC) {
     const command = cli
