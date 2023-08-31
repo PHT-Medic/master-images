@@ -1,3 +1,11 @@
+## [3.0.1](https://github.com/PHT-Medic/master-images/compare/v3.0.0...v3.0.1) (2023-08-31)
+
+
+### Bug Fixes
+
+* console message for missing request payload keys ([c06b76b](https://github.com/PHT-Medic/master-images/commit/c06b76b7777f66af23aa2616cee4ea8ff9bb05c2))
+* verifying webhook request signature ([56f3e12](https://github.com/PHT-Medic/master-images/commit/56f3e12ec6508112384b8efeec7c37df51826af8))
+
 # [3.0.0](https://github.com/PHT-Medic/master-images/compare/v2.0.1...v3.0.0) (2023-08-31)
 
 
