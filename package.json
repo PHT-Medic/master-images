@@ -37,7 +37,7 @@
         "docker-scan": "^1.1.0",
         "dockerode": "^3.3.5",
         "dotenv": "^16.3.1",
-        "get-port-please": "^3.0.2",
+        "get-port-please": "^3.1.1",
         "locter": "^1.2.1",
         "routup": "^1.0.2",
         "semantic-release": "^21.1.1",
