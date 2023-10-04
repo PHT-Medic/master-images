@@ -3,8 +3,8 @@ numpy
 pandas
 scikit-learn
 scikit-image
-torch
-torchvision
+nibabel
+scipy
 pydicom
 matplotlib
 tqdm
