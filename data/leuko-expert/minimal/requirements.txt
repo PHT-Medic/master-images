@@ -1,0 +1,9 @@
+minio
+numpy
+pandas == 2.0.3
+scikit-learn
+requests
+fpdf
+pycap
+matplotlib
+
