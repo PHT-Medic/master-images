@@ -38,7 +38,7 @@
         "dockerode": "^3.3.5",
         "dotenv": "^16.3.1",
         "get-port-please": "^3.1.1",
-        "locter": "^1.2.1",
+        "locter": "^1.2.3",
         "routup": "^1.0.2",
         "semantic-release": "^21.1.1",
         "semver": "^7.5.4",
