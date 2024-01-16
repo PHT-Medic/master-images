@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/PHT-Medic/master-images/compare/v3.2.0...v3.2.1) (2024-01-16)
+
+
+### Bug Fixes
+
+* restrict to one threads for testing this image in Leipzig ([31b5c76](https://github.com/PHT-Medic/master-images/commit/31b5c76b35ea20e65ed83af26230df92cde75c52))
+
 # [3.2.0](https://github.com/PHT-Medic/master-images/compare/v3.1.0...v3.2.0) (2023-11-20)
 
 
