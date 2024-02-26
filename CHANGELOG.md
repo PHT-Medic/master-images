@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/PHT-Medic/master-images/compare/v3.2.2...v3.3.0) (2024-02-26)
+
+
+### Features
+
+* add cryptography to leuko expert minimal image ([d9944b4](https://github.com/PHT-Medic/master-images/commit/d9944b4aac940b3036a33f8b9742c169074ce230))
+
 ## [3.2.2](https://github.com/PHT-Medic/master-images/compare/v3.2.1...v3.2.2) (2024-01-18)
 
 
