@@ -6,4 +6,5 @@ requests
 fpdf
 pycap
 matplotlib
+cryptography
 
