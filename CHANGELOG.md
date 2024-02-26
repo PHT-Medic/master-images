@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/PHT-Medic/master-images/compare/v3.2.1...v3.2.2) (2024-01-18)
+
+
+### Bug Fixes
+
+* restrict to one threads for testing this image in Leipzig same problem for the base image used for GANs ([2585a5d](https://github.com/PHT-Medic/master-images/commit/2585a5de401c896f5c4548c5bebb4a8732645582))
+
 ## [3.2.1](https://github.com/PHT-Medic/master-images/compare/v3.2.0...v3.2.1) (2024-01-16)
 
 
