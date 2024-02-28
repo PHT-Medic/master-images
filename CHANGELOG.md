@@ -1,3 +1,10 @@
+# [3.4.0](https://github.com/PHT-Medic/master-images/compare/v3.3.0...v3.4.0) (2024-02-28)
+
+
+### Features
+
+* add cryptography to python  ml image ([eed9a18](https://github.com/PHT-Medic/master-images/commit/eed9a189b47ead02c053c02d3b0c1c685bc69327))
+
 # [3.3.0](https://github.com/PHT-Medic/master-images/compare/v3.2.2...v3.3.0) (2024-02-26)
 
 
