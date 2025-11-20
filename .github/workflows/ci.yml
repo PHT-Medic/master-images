@@ -13,7 +13,7 @@ permissions:
     pull-requests: write
 
 env:
-    PRIMARY_NODE_VERSION: 18
+    PRIMARY_NODE_VERSION: 22
 
 jobs:
     install:
@@ -58,37 +58,5 @@ jobs:
 
             -   name: Build an image
                 run: npm run cli -- build python/base
-
-    release:
-        name: Release
-        needs: [build, test]
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Checkout
-                uses: actions/checkout@v3
-                with:
-                    fetch-depth: 0
-
-            -   name: Install
-                uses: ./.github/actions/install
-                with:
-                    node-version: ${{ env.PRIMARY_NODE_VERSION }}
-
-            -   name: Build
-                uses: ./.github/actions/build
-
-            -   name: Webhook PROD
-                uses: distributhor/workflow-webhook@v3
-                if: ${{ github.ref_name == 'master' }}
-                with:
-                    webhook_url: ${{ secrets.WEBHOOK_PROD_URL }}
-                    webhook_secret: ${{ secrets.WEBHOOK_PROD_SECRET }}
-
-            -   name: Webhook BETA
-                uses: distributhor/workflow-webhook@v3
-                if: ${{ github.ref_name == 'beta' }}
-                with:
-                    webhook_url: ${{ secrets.WEBHOOK_DEV_URL }}
-                    webhook_secret: ${{ secrets.WEBHOOK_DEV_SECRET }}
 
 

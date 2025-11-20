@@ -28,8 +28,6 @@
     "license": "MIT",
     "dependencies": {
         "@routup/body": "^1.0.1",
-        "@tada5hi/semantic-release": "^0.2.0",
-        "@tada5hi/tsconfig": "^0.5.0",
         "cac": "^6.7.14",
         "consola": "^3.2.3",
         "continu": "^1.3.2",
@@ -40,21 +38,20 @@
         "get-port-please": "^3.1.1",
         "locter": "^1.2.1",
         "routup": "^1.0.2",
-        "semantic-release": "^21.1.1",
         "semver": "^7.5.4",
         "smob": "^1.4.0",
         "tar-fs": "^3.0.4",
-        "ts-node": "^10.9.1",
         "zod": "^3.22.2"
     },
     "devDependencies": {
-        "@tada5hi/eslint-config-typescript": "^1.2.3",
-        "@types/cross-spawn": "^6.0.2",
-        "@types/dockerode": "^3.3.19",
-        "@types/node": "^20.4.4",
-        "@types/semver": "^7.5.1",
-        "@types/tar-fs": "^2.0.1",
+        "@tada5hi/eslint-config-typescript": "^1.2.17",
+        "@tada5hi/tsconfig": "^0.6.0",
+        "@types/cross-spawn": "^6.0.6",
+        "@types/dockerode": "^3.3.47",
+        "@types/node": "^22.19.1",
+        "@types/semver": "^7.7.1",
+        "@types/tar-fs": "^2.0.4",
         "eslint": "^8.48.0",
-        "typescript": "^5.2.2"
+        "typescript": "^5.9.3"
     }
 }
