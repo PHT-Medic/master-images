@@ -65,7 +65,7 @@ jobs:
                   npm run test:coverage
 
             -   name: Upload report
-                uses: codecov/codecov-action@v5.4.0
+                uses: codecov/codecov-action@v5.5.2
                 if: steps.release.outputs.releases_created == 'true'
                 with:
                   token: ${{ secrets.codecov }}
